@@ -9914,45 +9914,46 @@ class _AiHubPageState extends State<AiHubPage> {
   Widget build(BuildContext context) {
     return DefaultTabController(
       length: 5,
-      child: Scaffold(
-        appBar: AppBar(
-          title: const Text('AI Coach'),
-          actions: [
-            IconButton(
-              tooltip: 'Sign out',
-              onPressed: () => FirebaseAuth.instance.signOut(),
-              icon: const Icon(Icons.logout),
+      child: Builder(
+        builder: (tabContext) => Scaffold(
+          appBar: AppBar(
+            title: const Text('AI Coach'),
+            actions: [
+              IconButton(
+                tooltip: 'Sign out',
+                onPressed: () => FirebaseAuth.instance.signOut(),
+                icon: const Icon(Icons.logout),
+              ),
+            ],
+            bottom: const TabBar(
+              isScrollable: true,
+              labelColor: AppColors.blue,
+              unselectedLabelColor: AppColors.muted,
+              indicatorColor: AppColors.pink,
+              tabs: [
+                Tab(icon: Icon(Icons.dashboard_customize), text: 'Coach'),
+                Tab(icon: Icon(Icons.style), text: 'Review'),
+                Tab(icon: Icon(Icons.chat_bubble_outline), text: 'Tutor'),
+                Tab(icon: Icon(Icons.edit_note), text: 'Sentence Lab'),
+                Tab(icon: Icon(Icons.phone_android), text: 'Device'),
+              ],
             ),
-          ],
-          bottom: const TabBar(
-            isScrollable: true,
-            labelColor: AppColors.blue,
-            unselectedLabelColor: AppColors.muted,
-            indicatorColor: AppColors.pink,
-            tabs: [
-              Tab(icon: Icon(Icons.dashboard_customize), text: 'Coach'),
-              Tab(icon: Icon(Icons.style), text: 'Review'),
-              Tab(icon: Icon(Icons.chat_bubble_outline), text: 'Tutor'),
-              Tab(icon: Icon(Icons.edit_note), text: 'Sentence Lab'),
-              Tab(icon: Icon(Icons.phone_android), text: 'Device'),
+          ),
+          body: TabBarView(
+            children: [
+              _CoachTab(
+                history: widget.history,
+                mastery: widget.mastery,
+                onStartReview: () {
+                  DefaultTabController.of(tabContext).animateTo(1);
+                },
+              ),
+              _ReviewTab(words: widget.words),
+              _TutorTab(words: widget.words, mastery: widget.mastery),
+              _SentenceTab(words: widget.words),
+              const _DeviceTab(),
             ],
           ),
-        ),
-        body: TabBarView(
-          children: [
-            _CoachTab(
-              history: widget.history,
-              mastery: widget.mastery,
-              onStartReview: () {
-                final c = DefaultTabController.of(context);
-                c.animateTo(1);
-              },
-            ),
-            _ReviewTab(words: widget.words),
-            _TutorTab(words: widget.words, mastery: widget.mastery),
-            _SentenceTab(words: widget.words),
-            const _DeviceTab(),
-          ],
         ),
       ),
     );
@@ -10047,7 +10048,9 @@ class _CoachTab extends StatelessWidget {
                 child: FilledButton.icon(
                   onPressed: s.words.length < 4 ? null : onStartReview,
                   icon: const Icon(Icons.play_arrow),
-                  label: const Text('Start today\'s review'),
+                  label: Text(
+                    'Start today\'s review (${s.dailyGoal} questions)',
+                  ),
                 ),
               ),
             ],
@@ -10153,7 +10156,6 @@ class _ReviewTabState extends State<_ReviewTab>
   bool revealed = false;
   bool started = false;
   int again = 0, good = 0;
-  final Set<String> requeued = {};
 
   @override
   bool get wantKeepAlive => true;
@@ -10161,13 +10163,12 @@ class _ReviewTabState extends State<_ReviewTab>
   void _start() {
     final s = context.read<StudyProvider>();
     setState(() {
-      queue = s.sessionQueue();
+      queue = s.sessionQueue(size: s.dailyGoal);
       idx = 0;
       revealed = false;
       started = true;
       again = 0;
       good = 0;
-      requeued.clear();
     });
   }
 
@@ -10177,7 +10178,6 @@ class _ReviewTabState extends State<_ReviewTab>
     s.review(w, q);
     if (q < 3) {
       again++;
-      if (requeued.add(w.word)) queue.add(w); // see it once more this session
     } else {
       good++;
     }
@@ -10221,7 +10221,7 @@ class _ReviewTabState extends State<_ReviewTab>
                 FilledButton.icon(
                   onPressed: widget.words.length < 4 ? null : _start,
                   icon: const Icon(Icons.play_arrow),
-                  label: Text('Start session (${s.dailyGoal} cards)'),
+                  label: Text('Start session (${s.dailyGoal} questions)'),
                 ),
               ],
             ),
