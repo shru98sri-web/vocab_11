@@ -43,6 +43,11 @@ and is also bundled as an offline startup fallback. If the API is unavailable,
 the app loads its cached vocabulary or this bundled dataset. API-backed writes
 and chat still require a reachable backend.
 
+The GitHub Pages workflow builds with the bundled dataset when
+`VOCAB_API_URL` is unset or points to the local development server. Set the
+repository Actions variable to a public HTTPS backend URL to enable server-backed
+features on the published site.
+
 ## Vocabulary agent and MCP
 
 The Tutor uses the backend's local vocabulary tools for exact lookups, search,

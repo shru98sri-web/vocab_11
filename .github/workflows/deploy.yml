@@ -35,13 +35,17 @@ jobs:
         env:
           VOCAB_API_URL: ${{ vars.VOCAB_API_URL }}
         run: |
+          VOCAB_OFFLINE=false
           if [ -z "$VOCAB_API_URL" ]; then
             VOCAB_API_URL="http://127.0.0.1:8000"
-            echo "::warning::VOCAB_API_URL is unset; building with the local-only API URL $VOCAB_API_URL."
+            echo "::warning::VOCAB_API_URL is unset; building in offline mode with bundled vocabulary."
           fi
           case "$VOCAB_API_URL" in
             https://*) ;;
-            http://127.0.0.1:8000) ;;
+            http://127.0.0.1:8000)
+              VOCAB_OFFLINE=true
+              echo "::notice::Using bundled vocabulary because no public backend is configured."
+              ;;
             *)
               echo "::error::VOCAB_API_URL must use HTTPS, or be exactly http://127.0.0.1:8000 for local testing."
               exit 1
@@ -49,7 +53,8 @@ jobs:
           esac
           flutter build web --release \
             --base-href "/${GITHUB_REPOSITORY#*/}/" \
-            --dart-define="VOCAB_URL=$VOCAB_API_URL"
+            --dart-define="VOCAB_URL=$VOCAB_API_URL" \
+            --dart-define="VOCAB_OFFLINE=$VOCAB_OFFLINE"
 
       - name: Upload Pages artifact
         uses: actions/upload-pages-artifact@v3

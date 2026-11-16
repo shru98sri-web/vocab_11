@@ -311,6 +311,7 @@ class VocabularyAIApp extends StatelessWidget {
 class VocabularyApi {
   /// Override for local or production builds with --dart-define=VOCAB_URL=...
   static const _override = String.fromEnvironment('VOCAB_URL');
+  static const offlineMode = bool.fromEnvironment('VOCAB_OFFLINE');
 
   static String get baseUrl {
     final configured = _override.trim();
@@ -558,16 +559,21 @@ class WordEtl {
     // ---- EXTRACT ----
     List<Map<String, dynamic>> raw;
     String source;
-    try {
-      raw = await VocabularyApi.fetchRawWords();
-      source = 'server';
-    } catch (_) {
-      raw = await _readCache();
-      if (raw.isNotEmpty) {
-        source = 'offline cache';
-      } else {
-        raw = await _readBundledWords();
-        source = 'bundled dataset';
+    if (VocabularyApi.offlineMode) {
+      raw = await _readBundledWords();
+      source = 'bundled dataset';
+    } else {
+      try {
+        raw = await VocabularyApi.fetchRawWords();
+        source = 'server';
+      } catch (_) {
+        raw = await _readCache();
+        if (raw.isNotEmpty) {
+          source = 'offline cache';
+        } else {
+          raw = await _readBundledWords();
+          source = 'bundled dataset';
+        }
       }
     }
 
