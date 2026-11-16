@@ -24,6 +24,11 @@ import time
 from flask import Flask, jsonify, request
 from flask_cors import CORS
 
+if __package__:
+    from .vocabulary_agent import orchestrate_chat
+else:
+    from vocabulary_agent import orchestrate_chat
+
 app = Flask(__name__)
 CORS(
     app,
@@ -36,7 +41,7 @@ CORS(
 
 DATA_FILE = os.path.join(os.path.dirname(os.path.abspath(__file__)), "vocab_250.json")
 lock = threading.Lock()
-counters = {"GET": 0, "POST": 0, "PUT": 0, "DELETE": 0, "errors": 0}
+counters = {"GET": 0, "POST": 0, "PUT": 0, "DELETE": 0, "CHAT": 0, "errors": 0}
 started = time.time()
 
 
@@ -89,6 +94,26 @@ def health():
 @app.get("/metrics")
 def metrics():
     return jsonify({**counters, "words": len(load_words())})
+
+
+@app.post("/chat")
+def chat():
+    body = request.get_json(silent=True)
+    message = body.get("message") if isinstance(body, dict) else None
+    if not isinstance(message, str) or not message.strip():
+        counters["errors"] += 1
+        return jsonify({"error": "message is required"}), 400
+    if len(message) > 1200:
+        counters["errors"] += 1
+        return jsonify({"error": "message must be 1200 characters or fewer"}), 413
+
+    counters["CHAT"] += 1
+    try:
+        result = orchestrate_chat(message, load_words())
+    except ValueError as error:
+        counters["errors"] += 1
+        return jsonify({"error": str(error)}), 400
+    return jsonify({"chat": result})
 
 
 @app.get("/words")

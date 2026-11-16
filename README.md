@@ -13,6 +13,8 @@ python -m pip install -r backend/requirements.txt
 python backend/notifier.py
 ```
 
+Python 3.11 or newer is required for the MCP SDK.
+
 In a second terminal, start the Flutter web app:
 
 ```sh
@@ -40,3 +42,37 @@ The JSON file in `backend/vocab_250.json` is the API's server-side database,
 and is also bundled as an offline startup fallback. If the API is unavailable,
 the app loads its cached vocabulary or this bundled dataset. API-backed writes
 and chat still require a reachable backend.
+
+## Vocabulary agent and MCP
+
+The Tutor uses the backend's local vocabulary tools for exact lookups, search,
+and quizzes. `POST /chat` returns those results in the format expected by
+Flutter; it does not require an external model key. The same read-only tools are
+available to Copilot through the workspace-root `.mcp.json`.
+
+1. Install the backend requirements in the project virtual environment.
+2. Open this workspace in VS Code with the Copilot harness and approve the
+   `vocabulary` MCP server when prompted.
+3. Select **Vocabulary Orchestrator** in the agent picker to use the vocabulary
+   tools while keeping code edits, tests, and review under manual control.
+
+The MCP tools read the existing `backend/vocab_250.json`; the normal app API and
+manual vocabulary editing continue to work if MCP is unavailable. No MongoDB
+connection or external vocabulary server is configured.
+
+## Android builds
+
+Build a release APK and App Bundle with the backend URL reachable from the
+device:
+
+```sh
+flutter build apk --release \
+  --dart-define=VOCAB_URL=http://<computer-lan-ip>:8000
+flutter build appbundle --release \
+  --dart-define=VOCAB_URL=http://<computer-lan-ip>:8000
+```
+
+The outputs are `build/app/outputs/flutter-apk/app-release.apk` and
+`build/app/outputs/bundle/release/app-release.aab`. Release builds currently use
+the local debug signing key for device testing; configure a private release
+keystore before distributing through Google Play.
