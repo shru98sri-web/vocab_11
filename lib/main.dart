@@ -311,7 +311,16 @@ class VocabularyAIApp extends StatelessWidget {
 class VocabularyApi {
   /// Override for local or production builds with --dart-define=VOCAB_URL=...
   static const _override = String.fromEnvironment('VOCAB_URL');
-  static const offlineMode = bool.fromEnvironment('VOCAB_OFFLINE');
+  static const _offlineOverride = bool.fromEnvironment('VOCAB_OFFLINE');
+
+  static bool get offlineMode {
+    if (_offlineOverride) return true;
+    if (!kIsWeb) return false;
+
+    const localHosts = {'localhost', '127.0.0.1', '::1'};
+    final apiHost = Uri.tryParse(baseUrl)?.host;
+    return localHosts.contains(apiHost) && !localHosts.contains(Uri.base.host);
+  }
 
   static String get baseUrl {
     final configured = _override.trim();
