@@ -16,19 +16,19 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart'
     show
-    AndroidFlutterLocalNotificationsPlugin,
-    AndroidInitializationSettings,
-    AndroidNotificationChannel,
-    AndroidNotificationDetails,
-    BigTextStyleInformation,
-    DarwinInitializationSettings,
-    DarwinNotificationDetails,
-    FlutterLocalNotificationsPlugin,
-    Importance,
-    InitializationSettings,
-    NotificationDetails,
-    Priority,
-    NotificationResponse; // <-- PUSH
+        AndroidFlutterLocalNotificationsPlugin,
+        AndroidInitializationSettings,
+        AndroidNotificationChannel,
+        AndroidNotificationDetails,
+        BigTextStyleInformation,
+        DarwinInitializationSettings,
+        DarwinNotificationDetails,
+        FlutterLocalNotificationsPlugin,
+        Importance,
+        InitializationSettings,
+        NotificationDetails,
+        Priority,
+        NotificationResponse; // <-- PUSH
 import 'package:flutter_tts/flutter_tts.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:hive_flutter/hive_flutter.dart';
@@ -80,17 +80,17 @@ Future<void> main() async {
 
   // Show build/runtime errors on screen instead of a blank page
   ErrorWidget.builder = (details) => Material(
-    color: Colors.white,
-    child: Center(
-      child: Padding(
-        padding: const EdgeInsets.all(24),
-        child: Text(
-          details.exceptionAsString(),
-          style: TextStyle(color: Colors.red.shade700),
+        color: Colors.white,
+        child: Center(
+          child: Padding(
+            padding: const EdgeInsets.all(24),
+            child: Text(
+              details.exceptionAsString(),
+              style: TextStyle(color: Colors.red.shade700),
+            ),
+          ),
         ),
-      ),
-    ),
-  );
+      );
 
   try {
     await Firebase.initializeApp(
@@ -224,7 +224,7 @@ class VocabularyAIApp extends StatelessWidget {
           surfaceTintColor: Colors.transparent,
           indicatorColor: AppColors.softBlue,
           iconTheme: WidgetStateProperty.resolveWith(
-                (states) => IconThemeData(
+            (states) => IconThemeData(
               color: states.contains(WidgetState.selected)
                   ? AppColors.blue
                   : AppColors.pink,
@@ -286,8 +286,8 @@ class VocabularyAIApp extends StatelessWidget {
         ),
         switchTheme: SwitchThemeData(
           thumbColor: WidgetStateProperty.resolveWith(
-                (s) =>
-            s.contains(WidgetState.selected) ? AppColors.pink : Colors.grey,
+            (s) =>
+                s.contains(WidgetState.selected) ? AppColors.pink : Colors.grey,
           ),
         ),
         dividerTheme: const DividerThemeData(color: AppColors.border),
@@ -309,15 +309,18 @@ class VocabularyAIApp extends StatelessWidget {
 // ============================================================
 
 class VocabularyApi {
-  /// Override at run time:
-  /// flutter run --dart-define=VOCAB_URL=http://192.168.1.20:8000
+  /// Override for local or production builds with --dart-define=VOCAB_URL=...
   static const _override = String.fromEnvironment('VOCAB_URL');
 
   static String get baseUrl {
-    if (_override.isNotEmpty) return _override;
+    final configured = _override.trim();
+    if (configured.isNotEmpty) {
+      return configured.replaceFirst(RegExp(r'/+$'), '');
+    }
     if (kIsWeb) return 'http://localhost:8000';
-    if (Platform.isAndroid)
-      return 'http://192.168.1.16:8000'; // emulator -> PC
+    if (Platform.isAndroid) {
+      return 'http://192.168.1.42:8000'; // emulator -> PC
+    }
     return 'http://localhost:8000'; // iOS simulator, desktop
   }
 
@@ -331,7 +334,7 @@ class VocabularyApi {
     }
     final decoded = jsonDecode(utf8.decode(res.bodyBytes));
     final list =
-    decoded is Map ? (decoded['words'] as List? ?? []) : decoded as List;
+        decoded is Map ? (decoded['words'] as List? ?? []) : decoded as List;
     return list
         .whereType<Map>()
         .map((e) => Map<String, dynamic>.from(e))
@@ -429,18 +432,18 @@ class VocabularyWord {
       word: '${json['word'] ?? ''}',
       letter: '${json['letter'] ?? ''}',
       difficultCefrStyle:
-      '${json['difficult_cefr_style'] ?? json['difficulty_cefr_style'] ?? ''}',
+          '${json['difficult_cefr_style'] ?? json['difficulty_cefr_style'] ?? ''}',
       difficulty: '${json['difficulty'] ?? ''}',
       partsOfSpeech:
-      '${json['parts_of_speech'] ?? json['part_of_speech'] ?? ''}',
+          '${json['parts_of_speech'] ?? json['part_of_speech'] ?? ''}',
       definition: '${json['definition'] ?? ''}',
       meaning: '${json['meaning'] ?? ''}',
       synonyms: _stringList(json['synonyms']),
       example: '${json['example'] ?? ''}',
       gmatRelevance:
-      '${json['gmat_relavance'] ?? json['gmat_relevance'] ?? ''}',
+          '${json['gmat_relavance'] ?? json['gmat_relevance'] ?? ''}',
       ieltsRelevance:
-      '${json['ielts_relavance'] ?? json['ielts_relevance'] ?? ''}',
+          '${json['ielts_relavance'] ?? json['ielts_relevance'] ?? ''}',
       usage: '${json['usage'] ?? ''}',
       currentStatus: '${json['current_status'] ?? ''}',
       yearFocus: '${json['year_focus'] ?? ''}',
@@ -450,24 +453,24 @@ class VocabularyWord {
   }
 
   Map<String, dynamic> toJson() => {
-    'id': id,
-    'word': word,
-    'letter': letter,
-    'difficult_cefr_style': difficultCefrStyle,
-    'difficulty': difficulty,
-    'parts_of_speech': partsOfSpeech,
-    'definition': definition,
-    'meaning': meaning,
-    'synonyms': synonyms,
-    'example': example,
-    'gmat_relavance': gmatRelevance,
-    'ielts_relavance': ieltsRelevance,
-    'usage': usage,
-    'current_status': currentStatus,
-    'year_focus': yearFocus,
-    'source_reference': sourceReference,
-    'source_note': sourceNote,
-  };
+        'id': id,
+        'word': word,
+        'letter': letter,
+        'difficult_cefr_style': difficultCefrStyle,
+        'difficulty': difficulty,
+        'parts_of_speech': partsOfSpeech,
+        'definition': definition,
+        'meaning': meaning,
+        'synonyms': synonyms,
+        'example': example,
+        'gmat_relavance': gmatRelevance,
+        'ielts_relavance': ieltsRelevance,
+        'usage': usage,
+        'current_status': currentStatus,
+        'year_focus': yearFocus,
+        'source_reference': sourceReference,
+        'source_note': sourceNote,
+      };
 
   /// TRANSFORM helper: trims text, normalises case, de-duplicates synonyms.
   VocabularyWord cleaned() {
@@ -739,13 +742,13 @@ class AssessmentRecord {
   double get percentage => total == 0 ? 0 : score / total * 100;
 
   Map<String, dynamic> toJson() => {
-    'date': date.toIso8601String(),
-    'score': score,
-    'total': total,
-    'averageTime': averageTime,
-    'voiceScore': voiceScore,
-    'level': level,
-  };
+        'date': date.toIso8601String(),
+        'score': score,
+        'total': total,
+        'averageTime': averageTime,
+        'voiceScore': voiceScore,
+        'level': level,
+      };
 
   factory AssessmentRecord.fromJson(Map<String, dynamic> json) {
     double n(dynamic v) => v is num ? v.toDouble() : double.tryParse('$v') ?? 0;
@@ -796,11 +799,11 @@ class PerformanceSample {
   }
 
   Map<String, dynamic> toJson() => {
-    'accuracy': accuracy,
-    'speed': speed,
-    'voiceScore': voiceScore,
-    'target': target,
-  };
+        'accuracy': accuracy,
+        'speed': speed,
+        'voiceScore': voiceScore,
+        'target': target,
+      };
 
   factory PerformanceSample.fromJson(Map<String, dynamic> json) {
     double n(dynamic v) => v is num ? v.toDouble() : double.tryParse('$v') ?? 0;
@@ -855,11 +858,11 @@ class StudentPerformanceML {
   }
 
   double _predictSample(PerformanceSample s) => _sigmoid(
-    bias +
-        accuracyWeight * s.accuracy +
-        speedWeight * s.speed +
-        voiceWeight * s.voiceScore,
-  );
+        bias +
+            accuracyWeight * s.accuracy +
+            speedWeight * s.speed +
+            voiceWeight * s.voiceScore,
+      );
 
   /// Mean squared error on a dataset.
   double loss(List<PerformanceSample> data) {
@@ -890,11 +893,11 @@ class StudentPerformanceML {
 
   /// Full multi-epoch training with an 80/20 train/validation split.
   Future<TrainingResult> fit(
-      List<PerformanceSample> data, {
-        int epochs = 50,
-        double learningRate = .08,
-        void Function(int epoch, TrainingResult result)? onEpoch,
-      }) async {
+    List<PerformanceSample> data, {
+    int epochs = 50,
+    double learningRate = .08,
+    void Function(int epoch, TrainingResult result)? onEpoch,
+  }) async {
     final rnd = Random(7);
     final all = List<PerformanceSample>.from(data)..shuffle(rnd);
     final split = all.length >= 10 ? (all.length * .8).floor() : all.length;
@@ -930,12 +933,12 @@ class StudentPerformanceML {
   }
 
   Map<String, dynamic> toJson() => {
-    'bias': bias,
-    'accuracyWeight': accuracyWeight,
-    'speedWeight': speedWeight,
-    'voiceWeight': voiceWeight,
-    'trainingSteps': trainingSteps,
-  };
+        'bias': bias,
+        'accuracyWeight': accuracyWeight,
+        'speedWeight': speedWeight,
+        'voiceWeight': voiceWeight,
+        'trainingSteps': trainingSteps,
+      };
 
   void loadFromJson(Map<String, dynamic> json) {
     double n(dynamic v, double fallback) =>
@@ -993,12 +996,12 @@ class StudentStorage {
   }
 
   static Future<void> replaceSamples(
-      List<PerformanceSample> samples, {
-        SharedPreferences? prefs,
-      }) async {
+    List<PerformanceSample> samples, {
+    SharedPreferences? prefs,
+  }) async {
     final p = prefs ?? await SharedPreferences.getInstance();
     final trimmed =
-    samples.length > 500 ? samples.sublist(samples.length - 500) : samples;
+        samples.length > 500 ? samples.sublist(samples.length - 500) : samples;
     await p.setStringList(
       _samplesKey,
       trimmed.map((e) => jsonEncode(e.toJson())).toList(),
@@ -1056,8 +1059,7 @@ mixin AssessmentAlertMixin<T extends StatefulWidget> on State<T> {
             'Score: ${record.score}/${record.total}',
         confirmBtnText: 'Continue',
         confirmBtnColor: Colors.lightBlue,
-        barrierDismissible: false
-    );
+        barrierDismissible: false);
   }
 }
 // ============================================================
@@ -1101,9 +1103,6 @@ class _VocabularyHomeState extends State<VocabularyHome>
     _NavItem('Studio', Icons.hub_outlined, Icons.hub), // <-- STUDIO
     _NavItem('Scores', Icons.download_outlined, Icons.download),
     _NavItem('AI Coach', Icons.auto_awesome_outlined, Icons.auto_awesome),
-    _NavItem('Gemini Tutor', Icons.chat_bubble_outline, Icons.auto_awesome),
-
-
   ];
 
   @override
@@ -1141,10 +1140,10 @@ class _VocabularyHomeState extends State<VocabularyHome>
       currentMastery = latest == null
           ? 0
           : studentML.predict(
-        accuracy: latest.percentage,
-        averageTime: latest.averageTime,
-        voiceScore: latest.voiceScore.toDouble(),
-      );
+              accuracy: latest.percentage,
+              averageTime: latest.averageTime,
+              voiceScore: latest.voiceScore.toDouble(),
+            );
     });
   }
 
@@ -1292,7 +1291,6 @@ class _VocabularyHomeState extends State<VocabularyHome>
       ScoresPage(history: history),
       AiHubPage(words: words, history: history, mastery: currentMastery),
       const GeminiChatPage(),
-
     ];
 
     return LayoutBuilder(
@@ -1347,7 +1345,6 @@ class _VocabularyHomeState extends State<VocabularyHome>
       },
     );
   }
-
 }
 
 // ============================================================
@@ -1518,9 +1515,9 @@ class DashboardPage extends StatelessWidget {
     final advanced = words
         .where(
           (e) =>
-      e.difficultCefrStyle.toUpperCase() == 'C1' ||
-          e.difficultCefrStyle.toUpperCase() == 'C2',
-    )
+              e.difficultCefrStyle.toUpperCase() == 'C1' ||
+              e.difficultCefrStyle.toUpperCase() == 'C2',
+        )
         .length;
     final gmat =
         words.where((e) => e.gmatRelevance.toLowerCase() == 'high').length;
@@ -1570,12 +1567,12 @@ class DashboardPage extends StatelessWidget {
   }
 
   Widget _statCard(
-      String title,
-      String value,
-      IconData icon,
-      double width,
-      Color color,
-      ) {
+    String title,
+    String value,
+    IconData icon,
+    double width,
+    Color color,
+  ) {
     return SizedBox(
       width: width,
       child: Card(
@@ -1758,25 +1755,25 @@ class TestLauncher extends StatelessWidget {
                     const SizedBox(height: 12),
                     const Text(
                       '• Definition recognition\n'
-                          '• Meaning recognition\n'
-                          '• Context questions\n'
-                          '• Synonym questions\n'
-                          '• Adaptive difficulty\n'
-                          '• Response-time analysis',
+                      '• Meaning recognition\n'
+                      '• Context questions\n'
+                      '• Synonym questions\n'
+                      '• Adaptive difficulty\n'
+                      '• Response-time analysis',
                     ),
                     const SizedBox(height: 30),
                     FilledButton.icon(
                       onPressed: words.length < 4
                           ? null
                           : () => Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (_) => TestPage(
-                            words: words,
-                            onCompleted: onCompleted,
-                          ),
-                        ),
-                      ),
+                                context,
+                                MaterialPageRoute(
+                                  builder: (_) => TestPage(
+                                    words: words,
+                                    onCompleted: onCompleted,
+                                  ),
+                                ),
+                              ),
                       icon: const Icon(Icons.play_arrow),
                       label: const Padding(
                         padding: EdgeInsets.all(8),
@@ -1839,7 +1836,7 @@ class _TestPageState extends State<TestPage> {
 
     for (final word in selected) {
       final type =
-      QuestionType.values[random.nextInt(QuestionType.values.length)];
+          QuestionType.values[random.nextInt(QuestionType.values.length)];
       List<String> options;
       String correct;
 
@@ -1873,9 +1870,9 @@ class _TestPageState extends State<TestPage> {
   }
 
   List<String> _makeOptions(
-      VocabularyWord correct,
-      String Function(VocabularyWord) selector,
-      ) {
+    VocabularyWord correct,
+    String Function(VocabularyWord) selector,
+  ) {
     final candidates = widget.words
         .where((w) => w.word != correct.word)
         .toList()
@@ -1902,8 +1899,8 @@ class _TestPageState extends State<TestPage> {
 
   void _select(String answer) {
     final elapsed =
-    ((DateTime.now().millisecondsSinceEpoch - questionStartedAt) / 1000)
-        .round();
+        ((DateTime.now().millisecondsSinceEpoch - questionStartedAt) / 1000)
+            .round();
     answers[currentIndex] = answer;
     questionTimes[currentIndex] = elapsed;
 
@@ -1940,7 +1937,7 @@ class _TestPageState extends State<TestPage> {
     final averageTime = results.isEmpty
         ? 0
         : results.map((e) => e.seconds).reduce((a, b) => a + b) /
-        results.length;
+            results.length;
     final percentage = questions.isEmpty ? 0 : score / questions.length * 100;
 
     final record = AssessmentRecord(
@@ -2024,7 +2021,7 @@ class _TestPageState extends State<TestPage> {
           ),
           const SizedBox(height: 20),
           ...question.options.map(
-                (option) => Padding(
+            (option) => Padding(
               padding: const EdgeInsets.only(bottom: 12),
               child: _optionButton(option),
             ),
@@ -2064,8 +2061,8 @@ class ResultsPage extends StatelessWidget {
     final speedFactor = record.averageTime <= 8
         ? 10
         : record.averageTime <= 15
-        ? 5
-        : -5;
+            ? 5
+            : -5;
     return max(0, min(100, accuracy + speedFactor)).toDouble();
   }
 
@@ -2336,8 +2333,8 @@ class _VoiceTutorPageState extends State<VoiceTutorPage> {
         onError: (error) {
           if (mounted) {
             setState(
-                  () =>
-              tutorFeedback = 'Speech recognition error: ${error.errorMsg}',
+              () =>
+                  tutorFeedback = 'Speech recognition error: ${error.errorMsg}',
             );
           }
         },
@@ -2346,7 +2343,7 @@ class _VoiceTutorPageState extends State<VoiceTutorPage> {
     } catch (e) {
       if (mounted) {
         setState(
-              () => tutorFeedback = 'Unable to initialise speech recognition.',
+          () => tutorFeedback = 'Unable to initialise speech recognition.',
         );
       }
     }
@@ -2378,9 +2375,9 @@ class _VoiceTutorPageState extends State<VoiceTutorPage> {
             .whereType<Map>()
             .where(
               (v) =>
-          '${v['locale']}'.toLowerCase().replaceAll('_', '-') ==
-              'en-us',
-        )
+                  '${v['locale']}'.toLowerCase().replaceAll('_', '-') ==
+                  'en-us',
+            )
             .toList();
 
         Map? best;
@@ -2394,8 +2391,8 @@ class _VoiceTutorPageState extends State<VoiceTutorPage> {
         ]) {
           best = enVoices.cast<Map?>().firstWhere(
                 (v) => '${v!['name']}'.toLowerCase().contains(key),
-            orElse: () => null,
-          );
+                orElse: () => null,
+              );
           if (best != null) break;
         }
         best ??= enVoices.isNotEmpty ? enVoices.first : null;
@@ -2437,8 +2434,8 @@ class _VoiceTutorPageState extends State<VoiceTutorPage> {
     if (!speechAvailable) await _initializeVoice();
     if (!speechAvailable) {
       setState(
-            () => tutorFeedback =
-        'Speech recognition is not available on this device.',
+        () => tutorFeedback =
+            'Speech recognition is not available on this device.',
       );
       return;
     }
@@ -2508,7 +2505,7 @@ class _VoiceTutorPageState extends State<VoiceTutorPage> {
     wordMatch = targetWords.isEmpty ? 0 : matches / targetWords.length * 100;
     similarity = _stringSimilarity(target, spoken);
     final confidenceScore =
-    recognitionConfidence > 0 ? recognitionConfidence * 100 : 50;
+        recognitionConfidence > 0 ? recognitionConfidence * 100 : 50;
 
     voiceScore =
         ((wordMatch * .55) + (similarity * .25) + (confidenceScore * .20))
@@ -2517,15 +2514,15 @@ class _VoiceTutorPageState extends State<VoiceTutorPage> {
 
     if (voiceScore >= 90) {
       tutorFeedback =
-      'Excellent pronunciation recognition. Your response closely matched the target.';
+          'Excellent pronunciation recognition. Your response closely matched the target.';
     } else if (voiceScore >= 75) {
       tutorFeedback =
-      'Good attempt. Repeat the word once more for greater consistency.';
+          'Good attempt. Repeat the word once more for greater consistency.';
     } else if (voiceScore >= 60) {
       tutorFeedback = 'Developing. Speak more slowly and clearly, then repeat.';
     } else {
       tutorFeedback =
-      'Keep practising. Listen to the model pronunciation and try again.';
+          'Keep practising. Listen to the model pronunciation and try again.';
     }
 
     setState(() {});
@@ -2537,10 +2534,10 @@ class _VoiceTutorPageState extends State<VoiceTutorPage> {
     final level = voiceScore >= 90
         ? 'Excellent'
         : voiceScore >= 75
-        ? 'Good'
-        : voiceScore >= 60
-        ? 'Developing'
-        : 'Needs Practice';
+            ? 'Good'
+            : voiceScore >= 60
+                ? 'Developing'
+                : 'Needs Practice';
     await widget.onCompleted(
       AssessmentRecord(
         date: DateTime.now(),
@@ -2571,7 +2568,7 @@ class _VoiceTutorPageState extends State<VoiceTutorPage> {
   int _levenshtein(String a, String b) {
     final m = List.generate(
       a.length + 1,
-          (_) => List<int>.filled(b.length + 1, 0),
+      (_) => List<int>.filled(b.length + 1, 0),
     );
     for (int i = 0; i <= a.length; i++) {
       m[i][0] = i;
@@ -2975,7 +2972,7 @@ class _MiniDictionaryCardState extends State<MiniDictionaryCard> {
             const Expanded(
                 child: Text('Mini Dictionary',
                     style:
-                    TextStyle(fontSize: 18, fontWeight: FontWeight.bold))),
+                        TextStyle(fontSize: 18, fontWeight: FontWeight.bold))),
             Text('${_rows.length}',
                 style: const TextStyle(color: AppColors.muted)),
           ]),
@@ -3007,36 +3004,36 @@ class _MiniDictionaryCardState extends State<MiniDictionaryCard> {
           else if (_error != null)
             Text(_error!, style: const TextStyle(color: AppColors.pink))
           else if (_rows.isEmpty)
-              const Padding(
-                padding: EdgeInsets.symmetric(vertical: 12),
-                child: Text(
-                    'No matching words yet. Refresh vocabulary from the server.',
-                    style: TextStyle(color: AppColors.muted)),
-              )
-            else
-              ..._rows.take(5).map((row) => ExpansionTile(
-                tilePadding: EdgeInsets.zero,
-                childrenPadding: const EdgeInsets.only(bottom: 10),
-                title: Text('${row['word'] ?? ''}',
-                    style: const TextStyle(fontWeight: FontWeight.w700)),
-                subtitle: Text('${row['definition'] ?? row['meaning'] ?? ''}',
-                    maxLines: 2, overflow: TextOverflow.ellipsis),
-                children: [
-                  Align(
-                    alignment: Alignment.centerLeft,
-                    child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          if ('${row['meaning'] ?? ''}'.isNotEmpty)
-                            Text('Meaning: ${row['meaning']}'),
-                          if ('${row['example'] ?? ''}'.isNotEmpty)
-                            Text('Example: ${row['example']}'),
-                          if ('${row['synonyms'] ?? ''}'.isNotEmpty)
-                            Text('Synonyms: ${row['synonyms']}'),
-                        ]),
-                  ),
-                ],
-              )),
+            const Padding(
+              padding: EdgeInsets.symmetric(vertical: 12),
+              child: Text(
+                  'No matching words yet. Refresh vocabulary from the server.',
+                  style: TextStyle(color: AppColors.muted)),
+            )
+          else
+            ..._rows.take(5).map((row) => ExpansionTile(
+                  tilePadding: EdgeInsets.zero,
+                  childrenPadding: const EdgeInsets.only(bottom: 10),
+                  title: Text('${row['word'] ?? ''}',
+                      style: const TextStyle(fontWeight: FontWeight.w700)),
+                  subtitle: Text('${row['definition'] ?? row['meaning'] ?? ''}',
+                      maxLines: 2, overflow: TextOverflow.ellipsis),
+                  children: [
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            if ('${row['meaning'] ?? ''}'.isNotEmpty)
+                              Text('Meaning: ${row['meaning']}'),
+                            if ('${row['example'] ?? ''}'.isNotEmpty)
+                              Text('Example: ${row['example']}'),
+                            if ('${row['synonyms'] ?? ''}'.isNotEmpty)
+                              Text('Synonyms: ${row['synonyms']}'),
+                          ]),
+                    ),
+                  ],
+                )),
           if (!_loading && _rows.length > 5)
             Text('Showing 5 of ${_rows.length} matches',
                 style: const TextStyle(fontSize: 12, color: AppColors.muted)),
@@ -3112,8 +3109,9 @@ class _LearnerDetailsPageState extends State<LearnerDetailsPage>
         'longitude': _longitude,
         'updatedAt': DateTime.now().toIso8601String(),
       });
-      if (mounted)
+      if (mounted) {
         setState(() => _status = 'Learner details saved on this device.');
+      }
     } catch (e) {
       if (mounted) setState(() => _status = 'Save failed: $e');
     }
@@ -3176,11 +3174,12 @@ class _LearnerDetailsPageState extends State<LearnerDetailsPage>
         _latitude = pos.latitude;
         _longitude = pos.longitude;
         _status =
-        'Coordinates captured. Tap Save learner details to keep them.';
+            'Coordinates captured. Tap Save learner details to keep them.';
       });
     } catch (e) {
-      if (mounted)
+      if (mounted) {
         setState(() => _status = e.toString().replaceFirst('Exception: ', ''));
+      }
     } finally {
       if (mounted) setState(() => _busy = false);
     }
@@ -3215,7 +3214,7 @@ class _LearnerDetailsPageState extends State<LearnerDetailsPage>
       _latitude = null;
       _longitude = null;
       _status =
-      'Saved profile details cleared. The copied photo file may still exist on device.';
+          'Saved profile details cleared. The copied photo file may still exist on device.';
     });
   }
 
@@ -3241,7 +3240,7 @@ class _LearnerDetailsPageState extends State<LearnerDetailsPage>
               CircleAvatar(
                 radius: 56,
                 backgroundColor: AppColors.softBlue,
-                backgroundImage: hasPhoto ? FileImage(File(photo!)) : null,
+                backgroundImage: hasPhoto ? FileImage(File(photo)) : null,
                 child: !hasPhoto
                     ? const Icon(Icons.person, size: 54, color: AppColors.blue)
                     : null,
@@ -3285,10 +3284,10 @@ class _LearnerDetailsPageState extends State<LearnerDetailsPage>
                       onPressed: _busy ? null : _captureLocation,
                       icon: _busy
                           ? const SizedBox(
-                          width: 18,
-                          height: 18,
-                          child: CircularProgressIndicator(
-                              strokeWidth: 2, color: Colors.white))
+                              width: 18,
+                              height: 18,
+                              child: CircularProgressIndicator(
+                                  strokeWidth: 2, color: Colors.white))
                           : const Icon(Icons.my_location),
                       label: Text(_busy
                           ? 'Getting location…'
@@ -3526,7 +3525,7 @@ class _LoginPageState extends State<LoginPage> {
                                     : Icons.visibility_off,
                               ),
                               onPressed: () => setState(
-                                    () => _hidePassword = !_hidePassword,
+                                () => _hidePassword = !_hidePassword,
                               ),
                             ),
                           ),
@@ -3557,13 +3556,13 @@ class _LoginPageState extends State<LoginPage> {
                             onPressed: _loading ? null : _submit,
                             child: _loading
                                 ? const SizedBox(
-                              width: 22,
-                              height: 22,
-                              child: CircularProgressIndicator(
-                                strokeWidth: 2,
-                                color: Colors.white,
-                              ),
-                            )
+                                    width: 22,
+                                    height: 22,
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 2,
+                                      color: Colors.white,
+                                    ),
+                                  )
                                 : Text(_register ? 'SIGN UP' : 'SIGN IN'),
                           ),
                         ),
@@ -3624,7 +3623,7 @@ class _NotesPageState extends State<NotesPage> {
       return okLetter && okSearch;
     }).toList()
       ..sort(
-            (a, b) => a.word.toLowerCase().compareTo(b.word.toLowerCase()),
+        (a, b) => a.word.toLowerCase().compareTo(b.word.toLowerCase()),
       );
     return list;
   }
@@ -3921,21 +3920,21 @@ class _MLTrainingPageState extends State<MLTrainingPage> {
       body: loadingSamples
           ? const Center(child: CircularProgressIndicator())
           : ListView(
-        padding: const EdgeInsets.all(16),
-        children: [
-          _header(m),
-          const SizedBox(height: 14),
-          _weightsCard(m),
-          const SizedBox(height: 14),
-          _controlsCard(),
-          const SizedBox(height: 14),
-          _lossCard(),
-          const SizedBox(height: 14),
-          _playgroundCard(m),
-          const SizedBox(height: 14),
-          _etlCard(),
-        ],
-      ),
+              padding: const EdgeInsets.all(16),
+              children: [
+                _header(m),
+                const SizedBox(height: 14),
+                _weightsCard(m),
+                const SizedBox(height: 14),
+                _controlsCard(),
+                const SizedBox(height: 14),
+                _lossCard(),
+                const SizedBox(height: 14),
+                _playgroundCard(m),
+                const SizedBox(height: 14),
+                _etlCard(),
+              ],
+            ),
     );
   }
 
@@ -3991,31 +3990,31 @@ class _MLTrainingPageState extends State<MLTrainingPage> {
   }
 
   Widget _pill(String t) => Container(
-    padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-    decoration: BoxDecoration(
-      color: Colors.white.withValues(alpha: .22),
-      borderRadius: BorderRadius.circular(20),
-    ),
-    child:
-    Text(t, style: const TextStyle(color: Colors.white, fontSize: 12)),
-  );
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+        decoration: BoxDecoration(
+          color: Colors.white.withValues(alpha: .22),
+          borderRadius: BorderRadius.circular(20),
+        ),
+        child:
+            Text(t, style: const TextStyle(color: Colors.white, fontSize: 12)),
+      );
 
   // ---- weights ----
   Widget _weightsCard(StudentPerformanceML m) {
     Widget row(String name, double v, IconData icon, Color c) => Padding(
-      padding: const EdgeInsets.symmetric(vertical: 6),
-      child: Row(
-        children: [
-          Icon(icon, size: 20, color: c),
-          const SizedBox(width: 10),
-          Expanded(child: Text(name)),
-          Text(
-            v.toStringAsFixed(4),
-            style: const TextStyle(fontWeight: FontWeight.bold),
+          padding: const EdgeInsets.symmetric(vertical: 6),
+          child: Row(
+            children: [
+              Icon(icon, size: 20, color: c),
+              const SizedBox(width: 10),
+              Expanded(child: Text(name)),
+              Text(
+                v.toStringAsFixed(4),
+                style: const TextStyle(fontWeight: FontWeight.bold),
+              ),
+            ],
           ),
-        ],
-      ),
-    );
+        );
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(16),
@@ -4069,7 +4068,7 @@ class _MLTrainingPageState extends State<MLTrainingPage> {
               min: .005,
               max: .3,
               onChanged:
-              training ? null : (v) => setState(() => learningRate = v),
+                  training ? null : (v) => setState(() => learningRate = v),
             ),
             SwitchListTile(
               contentPadding: EdgeInsets.zero,
@@ -4080,7 +4079,7 @@ class _MLTrainingPageState extends State<MLTrainingPage> {
               ),
               value: useSynthetic,
               onChanged:
-              training ? null : (v) => setState(() => useSynthetic = v),
+                  training ? null : (v) => setState(() => useSynthetic = v),
             ),
             const SizedBox(height: 8),
             SizedBox(
@@ -4146,11 +4145,11 @@ class _MLTrainingPageState extends State<MLTrainingPage> {
               width: double.infinity,
               child: r == null || r.trainLoss.isEmpty
                   ? const Center(
-                child: Text(
-                  'Train the model to see the loss curve.',
-                  style: TextStyle(color: AppColors.muted),
-                ),
-              )
+                      child: Text(
+                        'Train the model to see the loss curve.',
+                        style: TextStyle(color: AppColors.muted),
+                      ),
+                    )
                   : CustomPaint(painter: LossPainter(r.trainLoss, r.valLoss)),
             ),
             if (r != null && r.trainLoss.isNotEmpty) ...[
@@ -4237,55 +4236,55 @@ class _MLTrainingPageState extends State<MLTrainingPage> {
 
     final wordStages = w == null
         ? const [
-      _EtlStage('Extract', Icons.cloud_download, 'not run yet'),
-      _EtlStage('Transform', Icons.auto_fix_high, 'not run yet'),
-      _EtlStage('Load', Icons.save_alt, 'not run yet'),
-    ]
+            _EtlStage('Extract', Icons.cloud_download, 'not run yet'),
+            _EtlStage('Transform', Icons.auto_fix_high, 'not run yet'),
+            _EtlStage('Load', Icons.save_alt, 'not run yet'),
+          ]
         : [
-      _EtlStage(
-        'Extract',
-        Icons.cloud_download,
-        '${w.extracted} records from ${w.source}',
-      ),
-      _EtlStage(
-        'Transform',
-        Icons.auto_fix_high,
-        '${w.rejected} rejected, ${w.duplicates} duplicates, text cleaned',
-      ),
-      _EtlStage(
-        'Load',
-        Icons.save_alt,
-        '${w.loaded} words to app + offline cache',
-      ),
-    ];
+            _EtlStage(
+              'Extract',
+              Icons.cloud_download,
+              '${w.extracted} records from ${w.source}',
+            ),
+            _EtlStage(
+              'Transform',
+              Icons.auto_fix_high,
+              '${w.rejected} rejected, ${w.duplicates} duplicates, text cleaned',
+            ),
+            _EtlStage(
+              'Load',
+              Icons.save_alt,
+              '${w.loaded} words to app + offline cache',
+            ),
+          ];
 
     final dataStages = d == null
         ? [
-      _EtlStage(
-        'Extract',
-        Icons.history,
-        '${samples.length} samples stored',
-      ),
-      const _EtlStage('Transform', Icons.auto_fix_high, 'run to rebuild'),
-      const _EtlStage('Load', Icons.save_alt, 'run to rebuild'),
-    ]
+            _EtlStage(
+              'Extract',
+              Icons.history,
+              '${samples.length} samples stored',
+            ),
+            const _EtlStage('Transform', Icons.auto_fix_high, 'run to rebuild'),
+            const _EtlStage('Load', Icons.save_alt, 'run to rebuild'),
+          ]
         : [
-      _EtlStage(
-        'Extract',
-        Icons.history,
-        '${d.extracted} assessments from history',
-      ),
-      _EtlStage(
-        'Transform',
-        Icons.auto_fix_high,
-        '${d.rejected} rejected, ${d.duplicates} duplicates, features scaled 0-1',
-      ),
-      _EtlStage(
-        'Load',
-        Icons.save_alt,
-        '${d.loaded} training samples stored',
-      ),
-    ];
+            _EtlStage(
+              'Extract',
+              Icons.history,
+              '${d.extracted} assessments from history',
+            ),
+            _EtlStage(
+              'Transform',
+              Icons.auto_fix_high,
+              '${d.rejected} rejected, ${d.duplicates} duplicates, features scaled 0-1',
+            ),
+            _EtlStage(
+              'Load',
+              Icons.save_alt,
+              '${d.loaded} training samples stored',
+            ),
+          ];
 
     return Card(
       child: Padding(
@@ -4474,14 +4473,14 @@ class ReportService {
       '${d.day.toString().padLeft(2, '0')}/${d.month.toString().padLeft(2, '0')}/${d.year}';
 
   static Future<Uint8List> buildPdf(
-      List<AssessmentRecord> history,
-      String student,
-      ) async {
+    List<AssessmentRecord> history,
+    String student,
+  ) async {
     final doc = pw.Document();
     final avg = history.isEmpty
         ? 0.0
         : history.map((e) => e.percentage).reduce((a, b) => a + b) /
-        history.length;
+            history.length;
 
     doc.addPage(
       pw.MultiPage(
@@ -4496,7 +4495,7 @@ class ReportService {
           pw.Text('Generated: ${_d(DateTime.now())}'),
           pw.Text(
             'Assessments: ${history.length}   '
-                'Average: ${avg.toStringAsFixed(1)}%',
+            'Average: ${avg.toStringAsFixed(1)}%',
           ),
           pw.SizedBox(height: 16),
           pw.TableHelper.fromTextArray(
@@ -4620,16 +4619,16 @@ class _ScoresPageState extends State<ScoresPage> {
   }
 
   Future<void> _downloadPdf() => _run(() async {
-    await ReportService.download(
-      await ReportService.buildPdf(widget.history, _student),
-    );
-    return null;
-  });
+        await ReportService.download(
+          await ReportService.buildPdf(widget.history, _student),
+        );
+        return null;
+      });
 
   Future<void> _uploadSheet() => _run(() async {
-    await ReportService.uploadToDrive(widget.history);
-    return null;
-  });
+        await ReportService.uploadToDrive(widget.history);
+        return null;
+      });
 
   Future<void> _sendEmail() {
     final to = _email.text.trim();
@@ -4735,7 +4734,7 @@ class _ScoresPageState extends State<ScoresPage> {
                     '${ReportService._d(r.date)} • Avg ${r.averageTime.toStringAsFixed(1)}s',
                   ),
                   trailing:
-                  r.voiceScore > 0 ? Text('Voice ${r.voiceScore}') : null,
+                      r.voiceScore > 0 ? Text('Voice ${r.voiceScore}') : null,
                 ),
               ),
             ),
@@ -4775,7 +4774,7 @@ Future<void> firebaseMessagingBackgroundHandler(RemoteMessage message) async {
 class NotificationService {
   static final FirebaseMessaging _fcm = FirebaseMessaging.instance;
   static final FlutterLocalNotificationsPlugin _local =
-  FlutterLocalNotificationsPlugin();
+      FlutterLocalNotificationsPlugin();
 
   static String? token;
   static bool _ready = false;
@@ -4789,7 +4788,7 @@ class NotificationService {
     'assessment_channel',
     'Assessment Reports',
     description:
-    'Assessment report and analysis notifications', // FIX: Added description tag
+        'Assessment report and analysis notifications', // FIX: Added description tag
     importance: Importance.high,
   );
 
@@ -4865,7 +4864,7 @@ class NotificationService {
     if (initialId != null && '$initialId'.isNotEmpty) {
       Future.delayed(
         const Duration(seconds: 2),
-            () => _openReport('$initialId'),
+        () => _openReport('$initialId'),
       );
     }
 
@@ -4955,10 +4954,10 @@ class AssessmentNotifier {
   /// Call this after every finished test / voice assessment.
   /// It never throws, so it can never break the existing app flow.
   static Future<void> publish(
-      AssessmentRecord record, {
-        required double mastery,
-        AssessmentRecord? previous,
-      }) async {
+    AssessmentRecord record, {
+    required double mastery,
+    AssessmentRecord? previous,
+  }) async {
     if (!_pushSupported) return;
     try {
       final user = FirebaseAuth.instance.currentUser;
@@ -5001,19 +5000,19 @@ class AssessmentNotifier {
   }
 
   static Map<String, dynamic> _buildReport(
-      AssessmentRecord r,
-      double mastery,
-      AssessmentRecord? previous,
-      String? email,
-      ) {
+    AssessmentRecord r,
+    double mastery,
+    AssessmentRecord? previous,
+    String? email,
+  ) {
     final acc = r.percentage;
     final isVoice = r.voiceScore > 0 && r.total == 100;
 
     final speed = r.averageTime <= 8
         ? 'fast'
         : r.averageTime <= 15
-        ? 'steady'
-        : 'slow';
+            ? 'steady'
+            : 'slow';
 
     String trend = 'First assessment recorded.';
     double? delta;
@@ -5022,17 +5021,17 @@ class AssessmentNotifier {
       trend = delta > 0.5
           ? 'Up ${delta.toStringAsFixed(1)} points from last time.'
           : delta < -0.5
-          ? 'Down ${(-delta).toStringAsFixed(1)} points from last time.'
-          : 'Same as last time.';
+              ? 'Down ${(-delta).toStringAsFixed(1)} points from last time.'
+              : 'Same as last time.';
     }
 
     final feedback = acc >= 90
         ? 'Excellent vocabulary mastery. Try advanced, context-heavy questions.'
         : acc >= 75
-        ? 'Strong performance. Focus on subtle meanings and synonyms.'
-        : acc >= 60
-        ? 'Developing. Review incorrect answers and practise recall.'
-        : 'Revisit definitions, meanings and examples, then retest.';
+            ? 'Strong performance. Focus on subtle meanings and synonyms.'
+            : acc >= 60
+                ? 'Developing. Review incorrect answers and practise recall.'
+                : 'Revisit definitions, meanings and examples, then retest.';
 
     final tips = <String>[
       if (acc < 75) 'Review the words you got wrong before the next test.',
@@ -5062,7 +5061,7 @@ class AssessmentNotifier {
       'speed': speed,
       'trend': trend,
       'trendDelta':
-      delta == null ? null : double.parse(delta.toStringAsFixed(1)),
+          delta == null ? null : double.parse(delta.toStringAsFixed(1)),
       'feedback': feedback,
       'recommendations': tips,
       'date': r.date.toIso8601String(),
@@ -5240,7 +5239,7 @@ String _fmt(double v, [int d = 3]) => v.toStringAsFixed(d);
 
 String _stamp(DateTime d) =>
     '${d.day.toString().padLeft(2, '0')}/${d.month.toString().padLeft(2, '0')}/${d.year} '
-        '${d.hour.toString().padLeft(2, '0')}:${d.minute.toString().padLeft(2, '0')}';
+    '${d.hour.toString().padLeft(2, '0')}:${d.minute.toString().padLeft(2, '0')}';
 
 int _fnv(String s) {
   var h = 0x811c9dc5;
@@ -5264,47 +5263,47 @@ void _studioToast(BuildContext c, String m) {
 }
 
 Widget _secTitle(BuildContext c, String t) => Padding(
-  padding: const EdgeInsets.only(top: 22, bottom: 8),
-  child: Text(t, style: Theme.of(c).textTheme.titleLarge),
-);
+      padding: const EdgeInsets.only(top: 22, bottom: 8),
+      child: Text(t, style: Theme.of(c).textTheme.titleLarge),
+    );
 
 Widget _pill(String t, Color c) => Container(
-  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-  decoration: BoxDecoration(
-    color: c.withAlpha(28),
-    borderRadius: BorderRadius.circular(20),
-    border: Border.all(color: c.withAlpha(90)),
-  ),
-  child: Text(
-    t,
-    style: TextStyle(color: c, fontWeight: FontWeight.w600, fontSize: 12),
-  ),
-);
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+      decoration: BoxDecoration(
+        color: c.withAlpha(28),
+        borderRadius: BorderRadius.circular(20),
+        border: Border.all(color: c.withAlpha(90)),
+      ),
+      child: Text(
+        t,
+        style: TextStyle(color: c, fontWeight: FontWeight.w600, fontSize: 12),
+      ),
+    );
 
 Widget _infoCard(Widget child) => Card(
-  child: Padding(padding: const EdgeInsets.all(16), child: child),
-);
+      child: Padding(padding: const EdgeInsets.all(16), child: child),
+    );
 
 Widget _kv(String k, String v) => Padding(
-  padding: const EdgeInsets.symmetric(vertical: 3),
-  child: Row(
-    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-    crossAxisAlignment: CrossAxisAlignment.start,
-    children: [
-      Flexible(
-        child: Text(k, style: const TextStyle(color: AppColors.muted)),
+      padding: const EdgeInsets.symmetric(vertical: 3),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Flexible(
+            child: Text(k, style: const TextStyle(color: AppColors.muted)),
+          ),
+          const SizedBox(width: 12),
+          Flexible(
+            child: Text(
+              v,
+              textAlign: TextAlign.end,
+              style: const TextStyle(fontWeight: FontWeight.w600),
+            ),
+          ),
+        ],
       ),
-      const SizedBox(width: 12),
-      Flexible(
-        child: Text(
-          v,
-          textAlign: TextAlign.end,
-          style: const TextStyle(fontWeight: FontWeight.w600),
-        ),
-      ),
-    ],
-  ),
-);
+    );
 
 Color _stageColor(String s) => s == 'Production'
     ? AppColors.blue
@@ -5313,8 +5312,8 @@ Color _stageColor(String s) => s == 'Production'
 Color _statusColor(String s) => s == 'OK'
     ? const Color(0xFF16A34A)
     : (s == 'WARNING'
-    ? const Color(0xFFF59E0B)
-    : (s == 'ALERT' ? const Color(0xFFDC2626) : AppColors.muted));
+        ? const Color(0xFFF59E0B)
+        : (s == 'ALERT' ? const Color(0xFFDC2626) : AppColors.muted));
 
 /// Per-user key/value storage for Studio data.
 class StudioStore {
@@ -5363,16 +5362,16 @@ class AuditEvent {
   AuditEvent(this.at, this.action, this.detail);
 
   Map<String, dynamic> toJson() => {
-    'at': at.toIso8601String(),
-    'action': action,
-    'detail': detail,
-  };
+        'at': at.toIso8601String(),
+        'action': action,
+        'detail': detail,
+      };
 
   factory AuditEvent.fromJson(Map<String, dynamic> j) => AuditEvent(
-    DateTime.tryParse('${j['at']}') ?? DateTime.now(),
-    '${j['action'] ?? ''}',
-    '${j['detail'] ?? ''}',
-  );
+        DateTime.tryParse('${j['at']}') ?? DateTime.now(),
+        '${j['action'] ?? ''}',
+        '${j['detail'] ?? ''}',
+      );
 }
 
 class AuditLog {
@@ -5414,11 +5413,11 @@ class DemoData {
   static const _key = 'studio_demo_dataset';
 
   static List<PerformanceSample> generate(
-      int n, {
-        int seed = 42,
-        double accShift = 0,
-        double targetShift = 0,
-      }) {
+    int n, {
+    int seed = 42,
+    double accShift = 0,
+    double targetShift = 0,
+  }) {
     final rnd = Random(seed);
     return List.generate(n, (_) {
       final a = _c01(0.30 + rnd.nextDouble() * 0.65 + accShift);
@@ -5518,11 +5517,11 @@ class LogisticModel implements MlModel {
 
   @override
   Map<String, dynamic> toParams() => {
-    'bias': bias,
-    'accuracyWeight': aw,
-    'speedWeight': sw,
-    'voiceWeight': vw,
-  };
+        'bias': bias,
+        'accuracyWeight': aw,
+        'speedWeight': sw,
+        'voiceWeight': vw,
+      };
 }
 
 class KnnModel implements MlModel {
@@ -5531,10 +5530,10 @@ class KnnModel implements MlModel {
   KnnModel(this.k, this.points);
 
   factory KnnModel.fromTrain(
-      List<PerformanceSample> train, {
-        int k = 5,
-        int maxPoints = 150,
-      }) {
+    List<PerformanceSample> train, {
+    int k = 5,
+    int maxPoints = 150,
+  }) {
     final step = max(1, (train.length / maxPoints).ceil());
     final pts = <List<double>>[];
     for (var i = 0; i < train.length; i += step) {
@@ -5621,9 +5620,9 @@ class EvalMetrics {
 }
 
 List<List<PerformanceSample>> _split(
-    List<PerformanceSample> data, {
-      int seed = 7,
-    }) {
+  List<PerformanceSample> data, {
+  int seed = 7,
+}) {
   final all = List<PerformanceSample>.from(data)..shuffle(Random(seed));
   if (all.length < 5) return [all, all];
   final cut = max(1, (all.length * .8).floor());
@@ -5640,22 +5639,22 @@ class TrainedCandidate {
   final double refMean;
   final double refStd;
   TrainedCandidate(
-      this.name,
-      this.model,
-      this.val,
-      this.train,
-      this.trainSize,
-      this.valSize,
-      this.refMean,
-      this.refStd,
-      );
+    this.name,
+    this.model,
+    this.val,
+    this.train,
+    this.trainSize,
+    this.valSize,
+    this.refMean,
+    this.refStd,
+  );
 }
 
 class DemoTrainer {
   static Future<List<TrainedCandidate>> trainBoth(
-      List<PerformanceSample> data, {
-        int epochs = 60,
-      }) async {
+    List<PerformanceSample> data, {
+    int epochs = 60,
+  }) async {
     final parts = _split(data);
     final train = parts[0];
     final val = parts[1];
@@ -5722,32 +5721,32 @@ class RegistryEntry {
   });
 
   Map<String, dynamic> toJson() => {
-    'id': id,
-    'name': name,
-    'type': type,
-    'version': version,
-    'stage': stage,
-    'metrics': metrics,
-    'params': params,
-    'trainedAt': trainedAt.toIso8601String(),
-    'samples': samples,
-    'checksum': checksum,
-    'source': source,
-  };
+        'id': id,
+        'name': name,
+        'type': type,
+        'version': version,
+        'stage': stage,
+        'metrics': metrics,
+        'params': params,
+        'trainedAt': trainedAt.toIso8601String(),
+        'samples': samples,
+        'checksum': checksum,
+        'source': source,
+      };
 
   factory RegistryEntry.fromJson(Map<String, dynamic> j) => RegistryEntry(
-    id: '${j['id']}',
-    name: '${j['name']}',
-    type: '${j['type']}',
-    version: _nv(j['version'], 1).round(),
-    stage: '${j['stage'] ?? 'Staging'}',
-    metrics: Map<String, dynamic>.from(j['metrics'] as Map? ?? {}),
-    params: Map<String, dynamic>.from(j['params'] as Map? ?? {}),
-    trainedAt: DateTime.tryParse('${j['trainedAt']}') ?? DateTime.now(),
-    samples: _nv(j['samples']).round(),
-    checksum: '${j['checksum'] ?? ''}',
-    source: '${j['source'] ?? ''}',
-  );
+        id: '${j['id']}',
+        name: '${j['name']}',
+        type: '${j['type']}',
+        version: _nv(j['version'], 1).round(),
+        stage: '${j['stage'] ?? 'Staging'}',
+        metrics: Map<String, dynamic>.from(j['metrics'] as Map? ?? {}),
+        params: Map<String, dynamic>.from(j['params'] as Map? ?? {}),
+        trainedAt: DateTime.tryParse('${j['trainedAt']}') ?? DateTime.now(),
+        samples: _nv(j['samples']).round(),
+        checksum: '${j['checksum'] ?? ''}',
+        source: '${j['source'] ?? ''}',
+      );
 }
 
 class ModelRegistry {
@@ -5781,8 +5780,8 @@ class ModelRegistry {
   }) async {
     final list = await load();
     final v = list
-        .where((e) => e.name == name)
-        .fold<int>(0, (m, e) => max(m, e.version)) +
+            .where((e) => e.name == name)
+            .fold<int>(0, (m, e) => max(m, e.version)) +
         1;
     final e = RegistryEntry(
       id: 'm${DateTime.now().microsecondsSinceEpoch}',
@@ -5805,9 +5804,9 @@ class ModelRegistry {
   }
 
   static Future<RegistryEntry> registerCandidate(
-      TrainedCandidate c,
-      String source,
-      ) {
+    TrainedCandidate c,
+    String source,
+  ) {
     return register(
       name: c.name,
       type: c.model.type,
@@ -5865,10 +5864,10 @@ class ModelRegistry {
 
   /// Called by the ML Training tab after each training run.
   static Future<void> registerLive(
-      StudentPerformanceML m,
-      TrainingResult r,
-      int samples,
-      ) async {
+    StudentPerformanceML m,
+    TrainingResult r,
+    int samples,
+  ) async {
     try {
       final data = await StudentStorage.loadPerformanceSamples();
       final lg = LogisticModel.fromML(m);
@@ -5985,8 +5984,8 @@ class ModelMonitor {
   }
 
   static Future<MonitorReport> evaluateSamples(
-      List<PerformanceSample> live,
-      ) async {
+    List<PerformanceSample> live,
+  ) async {
     final prod = await ModelRegistry.production();
     if (prod == null) {
       return MonitorReport(
@@ -6101,9 +6100,9 @@ class ModelMonitor {
 // ------------------------------------------------------------------
 class MlWorkflow {
   static Future<List<String>> runDemo(
-      List<AssessmentRecord> history, {
-        void Function(String)? onStep,
-      }) async {
+    List<AssessmentRecord> history, {
+    void Function(String)? onStep,
+  }) async {
     final log = <String>[];
     void step(String m) {
       log.add(m);
@@ -6175,9 +6174,9 @@ class VocabCrud {
   static String get _base => '${VocabularyApi.baseUrl}/words';
 
   static Future<CrudStat> _run(
-      String op,
-      Future<http.Response> Function() call,
-      ) async {
+    String op,
+    Future<http.Response> Function() call,
+  ) async {
     final sw = Stopwatch()..start();
     CrudStat stat;
     try {
@@ -6218,19 +6217,19 @@ class VocabCrud {
       _run('READ', () => http.get(Uri.parse('$_base/$id')));
 
   static Future<CrudStat> create(Map<String, dynamic> body) => _run(
-    'CREATE',
+        'CREATE',
         () =>
-        http.post(Uri.parse(_base), headers: _json, body: jsonEncode(body)),
-  );
+            http.post(Uri.parse(_base), headers: _json, body: jsonEncode(body)),
+      );
 
   static Future<CrudStat> update(dynamic id, Map<String, dynamic> body) => _run(
-    'UPDATE',
+        'UPDATE',
         () => http.put(
-      Uri.parse('$_base/$id'),
-      headers: _json,
-      body: jsonEncode(body),
-    ),
-  );
+          Uri.parse('$_base/$id'),
+          headers: _json,
+          body: jsonEncode(body),
+        ),
+      );
 
   static Future<CrudStat> delete(dynamic id) =>
       _run('DELETE', () => http.delete(Uri.parse('$_base/$id')));
@@ -6333,7 +6332,7 @@ class StudioHubPage extends StatelessWidget {
         Icons.account_tree_outlined,
         'ML workflow & proof of concept',
         'Pipeline stages, live status, one-tap demo run',
-            () => _open(
+        () => _open(
           context,
           WorkflowPage(
             words: words,
@@ -6347,31 +6346,31 @@ class StudioHubPage extends StatelessWidget {
         Icons.dataset_outlined,
         'Data & requirements',
         'Demo dataset, data profile, quality checks',
-            () => _open(context, const DataStudioPage()),
+        () => _open(context, const DataStudioPage()),
       ),
       _HubTile(
         Icons.model_training,
         'Train demo models',
         'Logistic vs kNN, metrics, register best',
-            () => _open(context, const TrainStudioPage()),
+        () => _open(context, const TrainStudioPage()),
       ),
       _HubTile(
         Icons.inventory_2_outlined,
         'Model registry',
         'Versions, stages, promote / roll back, model card',
-            () => _open(context, const RegistryPage()),
+        () => _open(context, const RegistryPage()),
       ),
       _HubTile(
         Icons.monitor_heart_outlined,
         'Monitoring',
         'Error, drift and latency with push alerts',
-            () => _open(context, MonitorPage(history: history)),
+        () => _open(context, MonitorPage(history: history)),
       ),
       _HubTile(
         Icons.sync_alt,
         'CRUD analysis (Python + Flutter)',
         'Create, read, update, delete + self-test',
-            () => _open(
+        () => _open(
           context,
           CrudPage(words: words, onReloadWords: onReloadWords),
         ),
@@ -6380,13 +6379,13 @@ class StudioHubPage extends StatelessWidget {
         Icons.shield_outlined,
         'Governance & security',
         'Consent, audit log, checks, delete my data',
-            () => _open(context, GovernancePage(onModelChanged: onModelChanged)),
+        () => _open(context, GovernancePage(onModelChanged: onModelChanged)),
       ),
       _HubTile(
         Icons.rocket_launch_outlined,
         'Release & code review',
         'Play Store testing, readiness checks',
-            () => _open(
+        () => _open(
           context,
           ReleasePage(words: words, model: model, wordReport: wordReport),
         ),
@@ -6409,7 +6408,7 @@ class StudioHubPage extends StatelessWidget {
                 const SizedBox(height: 6),
                 const Text(
                   'Everything needed to build, test, deploy and watch the vocabulary '
-                      'AI model: data, training, registry, monitoring, governance and release checks.',
+                  'AI model: data, training, registry, monitoring, governance and release checks.',
                   style: TextStyle(color: AppColors.muted),
                 ),
               ],
@@ -6427,7 +6426,7 @@ class StudioHubPage extends StatelessWidget {
                   ),
                   leading: CircleAvatar(
                     backgroundColor:
-                    i.isEven ? AppColors.softBlue : AppColors.softPink,
+                        i.isEven ? AppColors.softBlue : AppColors.softPink,
                     child: Icon(
                       tiles[i].icon,
                       color: i.isEven ? AppColors.blue : AppColors.pink,
@@ -6694,106 +6693,106 @@ class _WorkflowPageState extends State<WorkflowPage> {
       body: loading
           ? const Center(child: CircularProgressIndicator())
           : ListView(
-        padding: const EdgeInsets.all(20),
-        children: [
-          _infoCard(
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+              padding: const EdgeInsets.all(20),
               children: [
-                Text(
-                  'Workflow progress: $doneCount of ${stages.length}',
-                  style: Theme.of(context).textTheme.titleMedium,
-                ),
-                const SizedBox(height: 10),
-                LinearProgressIndicator(
-                  value: stages.isEmpty ? 0 : doneCount / stages.length,
-                  minHeight: 10,
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                const SizedBox(height: 14),
-                FilledButton.icon(
-                  onPressed: running ? null : _runDemo,
-                  icon: const Icon(Icons.play_arrow),
-                  label: Text(
-                    running ? 'Running...' : 'Run full demo workflow',
+                _infoCard(
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Workflow progress: $doneCount of ${stages.length}',
+                        style: Theme.of(context).textTheme.titleMedium,
+                      ),
+                      const SizedBox(height: 10),
+                      LinearProgressIndicator(
+                        value: stages.isEmpty ? 0 : doneCount / stages.length,
+                        minHeight: 10,
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      const SizedBox(height: 14),
+                      FilledButton.icon(
+                        onPressed: running ? null : _runDemo,
+                        icon: const Icon(Icons.play_arrow),
+                        label: Text(
+                          running ? 'Running...' : 'Run full demo workflow',
+                        ),
+                      ),
+                      const SizedBox(height: 6),
+                      const Text(
+                        'Generates demo data, trains two models, registers them, '
+                        'promotes the best, monitors it and sends a push notification.',
+                        style: TextStyle(color: AppColors.muted, fontSize: 12),
+                      ),
+                    ],
                   ),
                 ),
-                const SizedBox(height: 6),
-                const Text(
-                  'Generates demo data, trains two models, registers them, '
-                      'promotes the best, monitors it and sends a push notification.',
-                  style: TextStyle(color: AppColors.muted, fontSize: 12),
+                if (log.isNotEmpty) ...[
+                  const SizedBox(height: 12),
+                  _infoCard(
+                    SelectableText(
+                      log.join('\n'),
+                      style: const TextStyle(
+                        fontFamily: 'monospace',
+                        fontSize: 12,
+                      ),
+                    ),
+                  ),
+                ],
+                _secTitle(context, 'Pipeline stages'),
+                for (final s in stages)
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 8),
+                    child: Card(
+                      child: ListTile(
+                        leading: Icon(
+                          s.icon,
+                          color: s.done ? AppColors.blue : AppColors.pink,
+                        ),
+                        title: Text(
+                          s.title,
+                          style: const TextStyle(fontWeight: FontWeight.w600),
+                        ),
+                        subtitle: Text(s.detail),
+                        trailing: Icon(
+                          s.done
+                              ? Icons.check_circle
+                              : Icons.radio_button_unchecked,
+                          color: s.done ? AppColors.blue : AppColors.pink,
+                        ),
+                      ),
+                    ),
+                  ),
+                _secTitle(context, 'Proof of concept summary'),
+                _infoCard(
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      _kv(
+                        'Problem',
+                        'Predict vocabulary mastery from accuracy, speed and voice',
+                      ),
+                      _kv(
+                        'Data',
+                        'Server vocabulary + student assessments + demo data',
+                      ),
+                      _kv('Models', 'Logistic regression and kNN (pure Dart)'),
+                      _kv('Success target', 'MAE below 0.08 on hold-out data'),
+                      _kv(
+                        'Current result',
+                        p == null
+                            ? 'Run the workflow to get a result'
+                            : '${p.name} v${p.version}: MAE ${_fmt(mae ?? 0)} '
+                                '(${(mae ?? 1) < 0.08 ? 'PASS' : 'needs work'})',
+                      ),
+                      _kv(
+                        'Next steps',
+                        'Use more real data, add a TFLite model, automate retraining',
+                      ),
+                    ],
+                  ),
                 ),
               ],
             ),
-          ),
-          if (log.isNotEmpty) ...[
-            const SizedBox(height: 12),
-            _infoCard(
-              SelectableText(
-                log.join('\n'),
-                style: const TextStyle(
-                  fontFamily: 'monospace',
-                  fontSize: 12,
-                ),
-              ),
-            ),
-          ],
-          _secTitle(context, 'Pipeline stages'),
-          for (final s in stages)
-            Padding(
-              padding: const EdgeInsets.only(bottom: 8),
-              child: Card(
-                child: ListTile(
-                  leading: Icon(
-                    s.icon,
-                    color: s.done ? AppColors.blue : AppColors.pink,
-                  ),
-                  title: Text(
-                    s.title,
-                    style: const TextStyle(fontWeight: FontWeight.w600),
-                  ),
-                  subtitle: Text(s.detail),
-                  trailing: Icon(
-                    s.done
-                        ? Icons.check_circle
-                        : Icons.radio_button_unchecked,
-                    color: s.done ? AppColors.blue : AppColors.pink,
-                  ),
-                ),
-              ),
-            ),
-          _secTitle(context, 'Proof of concept summary'),
-          _infoCard(
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                _kv(
-                  'Problem',
-                  'Predict vocabulary mastery from accuracy, speed and voice',
-                ),
-                _kv(
-                  'Data',
-                  'Server vocabulary + student assessments + demo data',
-                ),
-                _kv('Models', 'Logistic regression and kNN (pure Dart)'),
-                _kv('Success target', 'MAE below 0.08 on hold-out data'),
-                _kv(
-                  'Current result',
-                  p == null
-                      ? 'Run the workflow to get a result'
-                      : '${p.name} v${p.version}: MAE ${_fmt(mae ?? 0)} '
-                      '(${(mae ?? 1) < 0.08 ? 'PASS' : 'needs work'})',
-                ),
-                _kv(
-                  'Next steps',
-                  'Use more real data, add a TFLite model, automate retraining',
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
     );
   }
 }
@@ -6874,193 +6873,193 @@ class _DataStudioPageState extends State<DataStudioPage> {
       body: loading
           ? const Center(child: CircularProgressIndicator())
           : ListView(
-        padding: const EdgeInsets.all(20),
-        children: [
-          _infoCard(
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+              padding: const EdgeInsets.all(20),
               children: [
-                SegmentedButton<bool>(
-                  segments: const [
-                    ButtonSegment(
-                      value: false,
-                      label: Text('Demo data'),
-                      icon: Icon(Icons.science_outlined),
-                    ),
-                    ButtonSegment(
-                      value: true,
-                      label: Text('My data'),
-                      icon: Icon(Icons.person_outline),
-                    ),
-                  ],
-                  selected: {useReal},
-                  onSelectionChanged: (s) =>
-                      setState(() => useReal = s.first),
-                ),
-                const SizedBox(height: 12),
-                Text(
-                  useReal
-                      ? '${real.length} samples from your assessments'
-                      : '${demo.length} demo rows stored',
-                  style: const TextStyle(color: AppColors.muted),
-                ),
-                if (blocked)
-                  const Padding(
-                    padding: EdgeInsets.only(top: 6),
-                    child: Text(
-                      'You turned off training on your data (Governance tab), so it is hidden here.',
-                      style: TextStyle(color: AppColors.pink),
-                    ),
-                  ),
-                if (!useReal) ...[
-                  const SizedBox(height: 8),
-                  Text('Rows to generate: ${n.round()}'),
-                  Slider(
-                    value: n,
-                    min: 100,
-                    max: 1000,
-                    divisions: 9,
-                    onChanged: (v) => setState(() => n = v),
-                  ),
-                  Row(
+                _infoCard(
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Expanded(
-                        child: FilledButton.icon(
-                          onPressed: _generate,
-                          icon: const Icon(Icons.auto_awesome),
-                          label: const Text('Generate demo data'),
+                      SegmentedButton<bool>(
+                        segments: const [
+                          ButtonSegment(
+                            value: false,
+                            label: Text('Demo data'),
+                            icon: Icon(Icons.science_outlined),
+                          ),
+                          ButtonSegment(
+                            value: true,
+                            label: Text('My data'),
+                            icon: Icon(Icons.person_outline),
+                          ),
+                        ],
+                        selected: {useReal},
+                        onSelectionChanged: (s) =>
+                            setState(() => useReal = s.first),
+                      ),
+                      const SizedBox(height: 12),
+                      Text(
+                        useReal
+                            ? '${real.length} samples from your assessments'
+                            : '${demo.length} demo rows stored',
+                        style: const TextStyle(color: AppColors.muted),
+                      ),
+                      if (blocked)
+                        const Padding(
+                          padding: EdgeInsets.only(top: 6),
+                          child: Text(
+                            'You turned off training on your data (Governance tab), so it is hidden here.',
+                            style: TextStyle(color: AppColors.pink),
+                          ),
                         ),
-                      ),
-                      const SizedBox(width: 10),
-                      OutlinedButton(
-                        onPressed: demo.isEmpty ? null : _clear,
-                        child: const Text('Clear'),
-                      ),
+                      if (!useReal) ...[
+                        const SizedBox(height: 8),
+                        Text('Rows to generate: ${n.round()}'),
+                        Slider(
+                          value: n,
+                          min: 100,
+                          max: 1000,
+                          divisions: 9,
+                          onChanged: (v) => setState(() => n = v),
+                        ),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: FilledButton.icon(
+                                onPressed: _generate,
+                                icon: const Icon(Icons.auto_awesome),
+                                label: const Text('Generate demo data'),
+                              ),
+                            ),
+                            const SizedBox(width: 10),
+                            OutlinedButton(
+                              onPressed: demo.isEmpty ? null : _clear,
+                              child: const Text('Clear'),
+                            ),
+                          ],
+                        ),
+                      ],
                     ],
                   ),
-                ],
-              ],
-            ),
-          ),
-          _secTitle(context, 'Data profile'),
-          Card(
-            child: SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: DataTable(
-                columns: const [
-                  DataColumn(label: Text('Feature')),
-                  DataColumn(label: Text('Min')),
-                  DataColumn(label: Text('Max')),
-                  DataColumn(label: Text('Mean')),
-                  DataColumn(label: Text('Std')),
-                  DataColumn(label: Text('Invalid')),
-                ],
-                rows: [
-                  for (final s in prof.stats)
-                    DataRow(
-                      cells: [
-                        DataCell(Text(s.name)),
-                        DataCell(Text(_fmt(s.min))),
-                        DataCell(Text(_fmt(s.max))),
-                        DataCell(Text(_fmt(s.mean))),
-                        DataCell(Text(_fmt(s.std))),
-                        DataCell(Text('${s.invalid}')),
+                ),
+                _secTitle(context, 'Data profile'),
+                Card(
+                  child: SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: DataTable(
+                      columns: const [
+                        DataColumn(label: Text('Feature')),
+                        DataColumn(label: Text('Min')),
+                        DataColumn(label: Text('Max')),
+                        DataColumn(label: Text('Mean')),
+                        DataColumn(label: Text('Std')),
+                        DataColumn(label: Text('Invalid')),
+                      ],
+                      rows: [
+                        for (final s in prof.stats)
+                          DataRow(
+                            cells: [
+                              DataCell(Text(s.name)),
+                              DataCell(Text(_fmt(s.min))),
+                              DataCell(Text(_fmt(s.max))),
+                              DataCell(Text(_fmt(s.mean))),
+                              DataCell(Text(_fmt(s.std))),
+                              DataCell(Text('${s.invalid}')),
+                            ],
+                          ),
                       ],
                     ),
-                ],
-              ),
-            ),
-          ),
-          _secTitle(context, 'Quality checks'),
-          _infoCard(
-            Column(
-              children: [
-                for (final c in checks)
-                  ListTile(
-                    dense: true,
-                    contentPadding: EdgeInsets.zero,
-                    leading: Icon(
-                      c[1] as bool
-                          ? Icons.check_circle
-                          : Icons.warning_amber_rounded,
-                      color:
-                      c[1] as bool ? AppColors.blue : AppColors.pink,
-                    ),
-                    title: Text(c[0] as String),
                   ),
+                ),
+                _secTitle(context, 'Quality checks'),
+                _infoCard(
+                  Column(
+                    children: [
+                      for (final c in checks)
+                        ListTile(
+                          dense: true,
+                          contentPadding: EdgeInsets.zero,
+                          leading: Icon(
+                            c[1] as bool
+                                ? Icons.check_circle
+                                : Icons.warning_amber_rounded,
+                            color:
+                                c[1] as bool ? AppColors.blue : AppColors.pink,
+                          ),
+                          title: Text(c[0] as String),
+                        ),
+                    ],
+                  ),
+                ),
+                _secTitle(context, 'Data requirements'),
+                Card(
+                  child: SingleChildScrollView(
+                    scrollDirection: Axis.horizontal,
+                    child: DataTable(
+                      columns: const [
+                        DataColumn(label: Text('Field')),
+                        DataColumn(label: Text('Type')),
+                        DataColumn(label: Text('Range')),
+                        DataColumn(label: Text('Source')),
+                        DataColumn(label: Text('Needed')),
+                      ],
+                      rows: const [
+                        DataRow(
+                          cells: [
+                            DataCell(Text('accuracy')),
+                            DataCell(Text('float')),
+                            DataCell(Text('0 - 1')),
+                            DataCell(Text('Test score / total')),
+                            DataCell(Text('Yes')),
+                          ],
+                        ),
+                        DataRow(
+                          cells: [
+                            DataCell(Text('speed')),
+                            DataCell(Text('float')),
+                            DataCell(Text('0 - 1')),
+                            DataCell(Text('1 / (1 + avg seconds / 15)')),
+                            DataCell(Text('Yes')),
+                          ],
+                        ),
+                        DataRow(
+                          cells: [
+                            DataCell(Text('voiceScore')),
+                            DataCell(Text('float')),
+                            DataCell(Text('0 - 1')),
+                            DataCell(Text('Voice tutor result')),
+                            DataCell(Text('Optional')),
+                          ],
+                        ),
+                        DataRow(
+                          cells: [
+                            DataCell(Text('target')),
+                            DataCell(Text('float')),
+                            DataCell(Text('0 - 1')),
+                            DataCell(Text('Weighted mastery label')),
+                            DataCell(Text('Yes')),
+                          ],
+                        ),
+                        DataRow(
+                          cells: [
+                            DataCell(Text('word, definition')),
+                            DataCell(Text('text')),
+                            DataCell(Text('non-empty')),
+                            DataCell(Text('Python server /words')),
+                            DataCell(Text('Yes')),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 10),
+                const Text(
+                  'Minimum 100 rows to train. No names or emails are used as features. '
+                  'Each student\'s data is stored under their own user id.',
+                  style: TextStyle(color: AppColors.muted),
+                ),
               ],
             ),
-          ),
-          _secTitle(context, 'Data requirements'),
-          Card(
-            child: SingleChildScrollView(
-              scrollDirection: Axis.horizontal,
-              child: DataTable(
-                columns: const [
-                  DataColumn(label: Text('Field')),
-                  DataColumn(label: Text('Type')),
-                  DataColumn(label: Text('Range')),
-                  DataColumn(label: Text('Source')),
-                  DataColumn(label: Text('Needed')),
-                ],
-                rows: const [
-                  DataRow(
-                    cells: [
-                      DataCell(Text('accuracy')),
-                      DataCell(Text('float')),
-                      DataCell(Text('0 - 1')),
-                      DataCell(Text('Test score / total')),
-                      DataCell(Text('Yes')),
-                    ],
-                  ),
-                  DataRow(
-                    cells: [
-                      DataCell(Text('speed')),
-                      DataCell(Text('float')),
-                      DataCell(Text('0 - 1')),
-                      DataCell(Text('1 / (1 + avg seconds / 15)')),
-                      DataCell(Text('Yes')),
-                    ],
-                  ),
-                  DataRow(
-                    cells: [
-                      DataCell(Text('voiceScore')),
-                      DataCell(Text('float')),
-                      DataCell(Text('0 - 1')),
-                      DataCell(Text('Voice tutor result')),
-                      DataCell(Text('Optional')),
-                    ],
-                  ),
-                  DataRow(
-                    cells: [
-                      DataCell(Text('target')),
-                      DataCell(Text('float')),
-                      DataCell(Text('0 - 1')),
-                      DataCell(Text('Weighted mastery label')),
-                      DataCell(Text('Yes')),
-                    ],
-                  ),
-                  DataRow(
-                    cells: [
-                      DataCell(Text('word, definition')),
-                      DataCell(Text('text')),
-                      DataCell(Text('non-empty')),
-                      DataCell(Text('Python server /words')),
-                      DataCell(Text('Yes')),
-                    ],
-                  ),
-                ],
-              ),
-            ),
-          ),
-          const SizedBox(height: 10),
-          const Text(
-            'Minimum 100 rows to train. No names or emails are used as features. '
-                'Each student\'s data is stored under their own user id.',
-            style: TextStyle(color: AppColors.muted),
-          ),
-        ],
-      ),
     );
   }
 }
@@ -7200,7 +7199,7 @@ class _TrainStudioPageState extends State<TrainStudioPage> {
                   max: 200,
                   divisions: 19,
                   onChanged:
-                  training ? null : (v) => setState(() => epochs = v),
+                      training ? null : (v) => setState(() => epochs = v),
                 ),
                 FilledButton.icon(
                   onPressed: training ? null : _train,
@@ -7387,92 +7386,92 @@ class _RegistryPageState extends State<RegistryPage> {
       body: loading
           ? const Center(child: CircularProgressIndicator())
           : entries.isEmpty
-          ? const Center(
-        child: Padding(
-          padding: EdgeInsets.all(24),
-          child: Text(
-            'No models yet. Train one in "Train demo models" or the ML Training tab.',
-            textAlign: TextAlign.center,
-            style: TextStyle(color: AppColors.muted),
-          ),
-        ),
-      )
-          : ListView(
-        padding: const EdgeInsets.all(20),
-        children: [
-          for (final e in entries)
-            Padding(
-              padding: const EdgeInsets.only(bottom: 12),
-              child: _infoCard(
-                Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+              ? const Center(
+                  child: Padding(
+                    padding: EdgeInsets.all(24),
+                    child: Text(
+                      'No models yet. Train one in "Train demo models" or the ML Training tab.',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(color: AppColors.muted),
+                    ),
+                  ),
+                )
+              : ListView(
+                  padding: const EdgeInsets.all(20),
                   children: [
-                    Row(
-                      children: [
-                        Expanded(
-                          child: Text(
-                            '${e.name}  v${e.version}',
-                            style: const TextStyle(
-                              fontSize: 16,
-                              fontWeight: FontWeight.w700,
-                            ),
+                    for (final e in entries)
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 12),
+                        child: _infoCard(
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                children: [
+                                  Expanded(
+                                    child: Text(
+                                      '${e.name}  v${e.version}',
+                                      style: const TextStyle(
+                                        fontSize: 16,
+                                        fontWeight: FontWeight.w700,
+                                      ),
+                                    ),
+                                  ),
+                                  _pill(e.stage, _stageColor(e.stage)),
+                                ],
+                              ),
+                              const SizedBox(height: 8),
+                              _kv('Type', e.type),
+                              _kv('MAE', _fmt(_nv(e.metrics['mae']))),
+                              _kv('R2', _fmt(_nv(e.metrics['r2']))),
+                              _kv('Samples', '${e.samples}'),
+                              _kv('Checksum', e.checksum),
+                              _kv('Trained', _stamp(e.trainedAt)),
+                              _kv('Source', e.source),
+                              const SizedBox(height: 8),
+                              Wrap(
+                                spacing: 8,
+                                runSpacing: 4,
+                                children: [
+                                  if (e.stage != 'Production')
+                                    FilledButton(
+                                      onPressed: () => _stage(e, 'Production'),
+                                      child: Text(
+                                        e.stage == 'Archived'
+                                            ? 'Roll back to this'
+                                            : 'Promote',
+                                      ),
+                                    ),
+                                  if (e.stage == 'Production')
+                                    OutlinedButton(
+                                      onPressed: () => _stage(e, 'Staging'),
+                                      child: const Text('Move to Staging'),
+                                    ),
+                                  if (e.stage != 'Archived')
+                                    OutlinedButton(
+                                      onPressed: () => _stage(e, 'Archived'),
+                                      child: const Text('Archive'),
+                                    ),
+                                  TextButton(
+                                    onPressed: () => _card(e),
+                                    child: const Text('Model card'),
+                                  ),
+                                  IconButton(
+                                    tooltip: 'Delete',
+                                    onPressed: () => _delete(e),
+                                    icon: const Icon(
+                                      Icons.delete_outline,
+                                      color: AppColors.pink,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ],
                           ),
                         ),
-                        _pill(e.stage, _stageColor(e.stage)),
-                      ],
-                    ),
-                    const SizedBox(height: 8),
-                    _kv('Type', e.type),
-                    _kv('MAE', _fmt(_nv(e.metrics['mae']))),
-                    _kv('R2', _fmt(_nv(e.metrics['r2']))),
-                    _kv('Samples', '${e.samples}'),
-                    _kv('Checksum', e.checksum),
-                    _kv('Trained', _stamp(e.trainedAt)),
-                    _kv('Source', e.source),
-                    const SizedBox(height: 8),
-                    Wrap(
-                      spacing: 8,
-                      runSpacing: 4,
-                      children: [
-                        if (e.stage != 'Production')
-                          FilledButton(
-                            onPressed: () => _stage(e, 'Production'),
-                            child: Text(
-                              e.stage == 'Archived'
-                                  ? 'Roll back to this'
-                                  : 'Promote',
-                            ),
-                          ),
-                        if (e.stage == 'Production')
-                          OutlinedButton(
-                            onPressed: () => _stage(e, 'Staging'),
-                            child: const Text('Move to Staging'),
-                          ),
-                        if (e.stage != 'Archived')
-                          OutlinedButton(
-                            onPressed: () => _stage(e, 'Archived'),
-                            child: const Text('Archive'),
-                          ),
-                        TextButton(
-                          onPressed: () => _card(e),
-                          child: const Text('Model card'),
-                        ),
-                        IconButton(
-                          tooltip: 'Delete',
-                          onPressed: () => _delete(e),
-                          icon: const Icon(
-                            Icons.delete_outline,
-                            color: AppColors.pink,
-                          ),
-                        ),
-                      ],
-                    ),
+                      ),
                   ],
                 ),
-              ),
-            ),
-        ],
-      ),
     );
   }
 }
@@ -7507,8 +7506,8 @@ class _MonitorPageState extends State<MonitorPage> {
     try {
       final r = simulate
           ? await ModelMonitor.evaluateSamples(
-        DemoData.generate(30, seed: 5, accShift: -.35, targetShift: -.18),
-      )
+              DemoData.generate(30, seed: 5, accShift: -.35, targetShift: -.18),
+            )
           : await ModelMonitor.evaluate(widget.history);
       await ModelMonitor.notifyIfNeeded(r);
       if (!mounted) return;
@@ -7521,27 +7520,27 @@ class _MonitorPageState extends State<MonitorPage> {
   }
 
   Widget _tile(IconData icon, String label, String value) => SizedBox(
-    width: 165,
-    child: Card(
-      child: Padding(
-        padding: const EdgeInsets.all(14),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Icon(icon, color: AppColors.blue),
-            const SizedBox(height: 6),
-            Text(label, style: const TextStyle(color: AppColors.muted)),
-            const SizedBox(height: 2),
-            Text(
-              value,
-              style: const TextStyle(
-                  fontWeight: FontWeight.w700, fontSize: 16),
+        width: 165,
+        child: Card(
+          child: Padding(
+            padding: const EdgeInsets.all(14),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Icon(icon, color: AppColors.blue),
+                const SizedBox(height: 6),
+                Text(label, style: const TextStyle(color: AppColors.muted)),
+                const SizedBox(height: 2),
+                Text(
+                  value,
+                  style: const TextStyle(
+                      fontWeight: FontWeight.w700, fontSize: 16),
+                ),
+              ],
             ),
-          ],
+          ),
         ),
-      ),
-    ),
-  );
+      );
 
   @override
   Widget build(BuildContext context) {
@@ -7551,101 +7550,101 @@ class _MonitorPageState extends State<MonitorPage> {
       body: loading || r == null
           ? const Center(child: CircularProgressIndicator())
           : ListView(
-        padding: const EdgeInsets.all(20),
-        children: [
-          _infoCard(
-            Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+              padding: const EdgeInsets.all(20),
               children: [
-                Row(
+                _infoCard(
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          _pill(r.status, _statusColor(r.status)),
+                          const SizedBox(width: 10),
+                          if (simulated)
+                            _pill('Simulated drift', AppColors.pink),
+                        ],
+                      ),
+                      const SizedBox(height: 10),
+                      Text(
+                        'Model: ${r.model}',
+                        style: const TextStyle(fontWeight: FontWeight.w600),
+                      ),
+                      Text(
+                        'Live assessments checked: ${r.liveCount}',
+                        style: const TextStyle(color: AppColors.muted),
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 12),
+                Wrap(
+                  spacing: 12,
+                  runSpacing: 12,
                   children: [
-                    _pill(r.status, _statusColor(r.status)),
-                    const SizedBox(width: 10),
-                    if (simulated)
-                      _pill('Simulated drift', AppColors.pink),
+                    _tile(
+                      Icons.error_outline,
+                      'Live error (MAE)',
+                      r.liveMae == null ? '-' : _fmt(r.liveMae!),
+                    ),
+                    _tile(
+                      Icons.flag_outlined,
+                      'Training error',
+                      r.baselineMae == null ? '-' : _fmt(r.baselineMae!),
+                    ),
+                    _tile(
+                      Icons.swap_vert,
+                      'Drift (z-score)',
+                      r.driftZ == null ? '-' : _fmt(r.driftZ!, 2),
+                    ),
+                    _tile(
+                      Icons.speed,
+                      'Latency',
+                      r.latencyUs == null ? '-' : '${_fmt(r.latencyUs!, 1)} us',
+                    ),
                   ],
                 ),
-                const SizedBox(height: 10),
-                Text(
-                  'Model: ${r.model}',
-                  style: const TextStyle(fontWeight: FontWeight.w600),
+                _secTitle(context, 'Findings'),
+                for (final f in r.findings)
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 8),
+                    child: Card(
+                      child: ListTile(
+                        leading: Icon(
+                          r.status == 'OK'
+                              ? Icons.check_circle
+                              : Icons.warning_amber_rounded,
+                          color: r.status == 'OK'
+                              ? AppColors.blue
+                              : AppColors.pink,
+                        ),
+                        title: Text(f),
+                      ),
+                    ),
+                  ),
+                const SizedBox(height: 12),
+                FilledButton.icon(
+                  onPressed: () => _run(),
+                  icon: const Icon(Icons.refresh),
+                  label: const Text('Check with my live data'),
                 ),
-                Text(
-                  'Live assessments checked: ${r.liveCount}',
-                  style: const TextStyle(color: AppColors.muted),
+                const SizedBox(height: 10),
+                OutlinedButton.icon(
+                  onPressed: () => _run(simulate: true),
+                  icon: const Icon(
+                    Icons.bug_report_outlined,
+                    color: AppColors.pink,
+                  ),
+                  label: const Text('Simulate drift (sends alert)'),
+                ),
+                const SizedBox(height: 10),
+                const Text(
+                  'Rules: ALERT when live error is more than double the training error '
+                  'or the accuracy mean drifts over 2 standard deviations. '
+                  'ALERT also sends a push notification.',
+                  style: TextStyle(color: AppColors.muted, fontSize: 12),
                 ),
               ],
             ),
-          ),
-          const SizedBox(height: 12),
-          Wrap(
-            spacing: 12,
-            runSpacing: 12,
-            children: [
-              _tile(
-                Icons.error_outline,
-                'Live error (MAE)',
-                r.liveMae == null ? '-' : _fmt(r.liveMae!),
-              ),
-              _tile(
-                Icons.flag_outlined,
-                'Training error',
-                r.baselineMae == null ? '-' : _fmt(r.baselineMae!),
-              ),
-              _tile(
-                Icons.swap_vert,
-                'Drift (z-score)',
-                r.driftZ == null ? '-' : _fmt(r.driftZ!, 2),
-              ),
-              _tile(
-                Icons.speed,
-                'Latency',
-                r.latencyUs == null ? '-' : '${_fmt(r.latencyUs!, 1)} us',
-              ),
-            ],
-          ),
-          _secTitle(context, 'Findings'),
-          for (final f in r.findings)
-            Padding(
-              padding: const EdgeInsets.only(bottom: 8),
-              child: Card(
-                child: ListTile(
-                  leading: Icon(
-                    r.status == 'OK'
-                        ? Icons.check_circle
-                        : Icons.warning_amber_rounded,
-                    color: r.status == 'OK'
-                        ? AppColors.blue
-                        : AppColors.pink,
-                  ),
-                  title: Text(f),
-                ),
-              ),
-            ),
-          const SizedBox(height: 12),
-          FilledButton.icon(
-            onPressed: () => _run(),
-            icon: const Icon(Icons.refresh),
-            label: const Text('Check with my live data'),
-          ),
-          const SizedBox(height: 10),
-          OutlinedButton.icon(
-            onPressed: () => _run(simulate: true),
-            icon: const Icon(
-              Icons.bug_report_outlined,
-              color: AppColors.pink,
-            ),
-            label: const Text('Simulate drift (sends alert)'),
-          ),
-          const SizedBox(height: 10),
-          const Text(
-            'Rules: ALERT when live error is more than double the training error '
-                'or the accuracy mean drifts over 2 standard deviations. '
-                'ALERT also sends a push notification.',
-            style: TextStyle(color: AppColors.muted, fontSize: 12),
-          ),
-        ],
-      ),
     );
   }
 }
@@ -7685,12 +7684,12 @@ class _CrudPageState extends State<CrudPage> {
     final l = q.isEmpty
         ? items
         : items
-        .where(
-          (w) =>
-      w.word.toLowerCase().contains(q) ||
-          w.definition.toLowerCase().contains(q),
-    )
-        .toList();
+            .where(
+              (w) =>
+                  w.word.toLowerCase().contains(q) ||
+                  w.definition.toLowerCase().contains(q),
+            )
+            .toList();
     return l.length > 200 ? l.sublist(0, 200) : l;
   }
 
@@ -7760,8 +7759,8 @@ class _CrudPageState extends State<CrudPage> {
                 if (wd.isEmpty ||
                     (def.text.trim().isEmpty && mean.text.trim().isEmpty)) {
                   setS(
-                        () => err =
-                    'A word and a definition or meaning are required.',
+                    () => err =
+                        'A word and a definition or meaning are required.',
                   );
                   return;
                 }
@@ -7888,7 +7887,7 @@ class _CrudPageState extends State<CrudPage> {
       final l = VocabCrud.log.where((s) => s.op == op).toList();
       final okCount = l.where((s) => s.ok).length;
       final avg =
-      l.isEmpty ? 0 : l.map((s) => s.ms).reduce((a, b) => a + b) / l.length;
+          l.isEmpty ? 0 : l.map((s) => s.ms).reduce((a, b) => a + b) / l.length;
       rows.add(
         DataRow(
           cells: [
@@ -8087,7 +8086,7 @@ class _GovernancePageState extends State<GovernancePage> {
         title: const Text('Delete all my data?'),
         content: const Text(
           'This removes your assessment history, training samples, ML model, '
-              'demo data, registry and audit log from this device and your cloud registry copies.',
+          'demo data, registry and audit log from this device and your cloud registry copies.',
         ),
         actions: [
           TextButton(
@@ -8165,135 +8164,135 @@ class _GovernancePageState extends State<GovernancePage> {
       body: loading
           ? const Center(child: CircularProgressIndicator())
           : ListView(
-        padding: const EdgeInsets.all(20),
-        children: [
-          _infoCard(
-            SwitchListTile(
-              contentPadding: EdgeInsets.zero,
-              value: consent,
-              onChanged: _setConsent,
-              title: const Text(
-                'Allow training on my assessment data',
-                style: TextStyle(fontWeight: FontWeight.w600),
-              ),
-              subtitle: const Text(
-                'When off, the data and training screens will not use your results.',
-              ),
-            ),
-          ),
-          _secTitle(context, 'Automatic checks'),
-          for (final c in checks)
-            Padding(
-              padding: const EdgeInsets.only(bottom: 8),
-              child: Card(
-                child: ListTile(
-                  leading: Icon(
-                    c.ok
-                        ? Icons.check_circle
-                        : Icons.warning_amber_rounded,
-                    color: c.ok ? AppColors.blue : AppColors.pink,
-                  ),
-                  title: Text(
-                    c.title,
-                    style: const TextStyle(fontWeight: FontWeight.w600),
-                  ),
-                  subtitle: Text(c.detail),
-                ),
-              ),
-            ),
-          _secTitle(context, 'Manual security review'),
-          const PersistentChecklist(
-            storeKey: 'gov_manual',
-            items: [
-              ChecklistItem(
-                'rules',
-                'Firestore rules published',
-                'Each user can only read and write their own documents.',
-              ),
-              ChecklistItem(
-                'secrets',
-                'No keys or passwords in the code',
-                'Server secrets live in Cloud Functions, never in the app.',
-              ),
-              ChecklistItem(
-                'privacy',
-                'Privacy policy ready',
-                'A public URL is needed for the Play Store listing.',
-              ),
-              ChecklistItem(
-                'retention',
-                'Retention period defined',
-                'For example: delete inactive student data after 12 months.',
-              ),
-              ChecklistItem(
-                'delete',
-                'Delete-my-data flow tested',
-                'Use the red button below and confirm the data is gone.',
-              ),
-              ChecklistItem(
-                'deps',
-                'Dependencies checked',
-                'Run flutter pub outdated and update packages with fixes.',
-              ),
-              ChecklistItem(
-                'bias',
-                'Model reviewed for bias',
-                'Check that accuracy is similar across student groups.',
-              ),
-            ],
-          ),
-          if (prod != null) ...[
-            _secTitle(context, 'Production model card'),
-            _infoCard(
-              SelectableText(
-                ModelCard.build(prod!),
-                style: const TextStyle(
-                  fontFamily: 'monospace',
-                  fontSize: 12,
-                ),
-              ),
-            ),
-          ],
-          _secTitle(context, 'Audit log (latest 15)'),
-          if (events.isEmpty)
-            const Text(
-              'No events yet.',
-              style: TextStyle(color: AppColors.muted),
-            )
-          else
-            _infoCard(
-              Column(
-                children: [
-                  for (final e in events.take(15))
-                    ListTile(
-                      dense: true,
-                      contentPadding: EdgeInsets.zero,
-                      title: Text(e.action),
-                      subtitle: Text('${_stamp(e.at)}  ${e.detail}'),
+              padding: const EdgeInsets.all(20),
+              children: [
+                _infoCard(
+                  SwitchListTile(
+                    contentPadding: EdgeInsets.zero,
+                    value: consent,
+                    onChanged: _setConsent,
+                    title: const Text(
+                      'Allow training on my assessment data',
+                      style: TextStyle(fontWeight: FontWeight.w600),
                     ),
+                    subtitle: const Text(
+                      'When off, the data and training screens will not use your results.',
+                    ),
+                  ),
+                ),
+                _secTitle(context, 'Automatic checks'),
+                for (final c in checks)
+                  Padding(
+                    padding: const EdgeInsets.only(bottom: 8),
+                    child: Card(
+                      child: ListTile(
+                        leading: Icon(
+                          c.ok
+                              ? Icons.check_circle
+                              : Icons.warning_amber_rounded,
+                          color: c.ok ? AppColors.blue : AppColors.pink,
+                        ),
+                        title: Text(
+                          c.title,
+                          style: const TextStyle(fontWeight: FontWeight.w600),
+                        ),
+                        subtitle: Text(c.detail),
+                      ),
+                    ),
+                  ),
+                _secTitle(context, 'Manual security review'),
+                const PersistentChecklist(
+                  storeKey: 'gov_manual',
+                  items: [
+                    ChecklistItem(
+                      'rules',
+                      'Firestore rules published',
+                      'Each user can only read and write their own documents.',
+                    ),
+                    ChecklistItem(
+                      'secrets',
+                      'No keys or passwords in the code',
+                      'Server secrets live in Cloud Functions, never in the app.',
+                    ),
+                    ChecklistItem(
+                      'privacy',
+                      'Privacy policy ready',
+                      'A public URL is needed for the Play Store listing.',
+                    ),
+                    ChecklistItem(
+                      'retention',
+                      'Retention period defined',
+                      'For example: delete inactive student data after 12 months.',
+                    ),
+                    ChecklistItem(
+                      'delete',
+                      'Delete-my-data flow tested',
+                      'Use the red button below and confirm the data is gone.',
+                    ),
+                    ChecklistItem(
+                      'deps',
+                      'Dependencies checked',
+                      'Run flutter pub outdated and update packages with fixes.',
+                    ),
+                    ChecklistItem(
+                      'bias',
+                      'Model reviewed for bias',
+                      'Check that accuracy is similar across student groups.',
+                    ),
+                  ],
+                ),
+                if (prod != null) ...[
+                  _secTitle(context, 'Production model card'),
+                  _infoCard(
+                    SelectableText(
+                      ModelCard.build(prod!),
+                      style: const TextStyle(
+                        fontFamily: 'monospace',
+                        fontSize: 12,
+                      ),
+                    ),
+                  ),
                 ],
-              ),
+                _secTitle(context, 'Audit log (latest 15)'),
+                if (events.isEmpty)
+                  const Text(
+                    'No events yet.',
+                    style: TextStyle(color: AppColors.muted),
+                  )
+                else
+                  _infoCard(
+                    Column(
+                      children: [
+                        for (final e in events.take(15))
+                          ListTile(
+                            dense: true,
+                            contentPadding: EdgeInsets.zero,
+                            title: Text(e.action),
+                            subtitle: Text('${_stamp(e.at)}  ${e.detail}'),
+                          ),
+                      ],
+                    ),
+                  ),
+                const SizedBox(height: 16),
+                OutlinedButton.icon(
+                  onPressed: () async {
+                    await AuditLog.clear();
+                    await _load();
+                  },
+                  icon: const Icon(Icons.clear_all, color: AppColors.pink),
+                  label: const Text('Clear audit log'),
+                ),
+                const SizedBox(height: 10),
+                FilledButton.icon(
+                  style: FilledButton.styleFrom(
+                    backgroundColor: AppColors.pink,
+                  ),
+                  onPressed: _deleteAll,
+                  icon: const Icon(Icons.delete_forever),
+                  label: const Text('Delete all my data'),
+                ),
+              ],
             ),
-          const SizedBox(height: 16),
-          OutlinedButton.icon(
-            onPressed: () async {
-              await AuditLog.clear();
-              await _load();
-            },
-            icon: const Icon(Icons.clear_all, color: AppColors.pink),
-            label: const Text('Clear audit log'),
-          ),
-          const SizedBox(height: 10),
-          FilledButton.icon(
-            style: FilledButton.styleFrom(
-              backgroundColor: AppColors.pink,
-            ),
-            onPressed: _deleteAll,
-            icon: const Icon(Icons.delete_forever),
-            label: const Text('Delete all my data'),
-          ),
-        ],
-      ),
     );
   }
 }
@@ -8600,11 +8599,11 @@ class _ReleasePageState extends State<ReleasePage> {
           _infoCard(
             const SelectableText(
               'flutter clean && flutter pub get\n'
-                  'flutter analyze\n'
-                  'flutter test\n'
-                  'flutter build appbundle --release \\\n'
-                  '  --dart-define=VOCAB_URL=https://your-server.com\n'
-                  '# upload build/app/outputs/bundle/release/app-release.aab',
+              'flutter analyze\n'
+              'flutter test\n'
+              'flutter build appbundle --release \\\n'
+              '  --dart-define=VOCAB_URL=https://your-server.com\n'
+              '# upload build/app/outputs/bundle/release/app-release.aab',
               style: TextStyle(fontFamily: 'monospace', fontSize: 12),
             ),
           ),
@@ -8635,9 +8634,9 @@ class _ReleasePageState extends State<ReleasePage> {
 ///                        child: const VocabularyAIApp()));
 class AppProviders {
   static List<SingleChildWidget> build() => [
-    ChangeNotifierProvider<StudyProvider>(create: (_) => StudyProvider()),
-    ChangeNotifierProvider<NativeProvider>(create: (_) => NativeProvider()),
-  ];
+        ChangeNotifierProvider<StudyProvider>(create: (_) => StudyProvider()),
+        ChangeNotifierProvider<NativeProvider>(create: (_) => NativeProvider()),
+      ];
 }
 
 // ------------------------------------------------------------------
@@ -8679,15 +8678,15 @@ class BrandBanner extends StatelessWidget {
   });
 
   Widget _gradientFill({Widget? child}) => Container(
-    decoration: const BoxDecoration(
-      gradient: LinearGradient(
-        colors: [AppColors.blue, AppColors.pink],
-        begin: Alignment.topLeft,
-        end: Alignment.bottomRight,
-      ),
-    ),
-    child: child,
-  );
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            colors: [AppColors.blue, AppColors.pink],
+            begin: Alignment.topLeft,
+            end: Alignment.bottomRight,
+          ),
+        ),
+        child: child,
+      );
 
   @override
   Widget build(BuildContext context) {
@@ -8986,14 +8985,14 @@ class CardState {
   DateTime? last;
 
   CardState(
-      this.word, {
-        this.ease = 2.5,
-        this.interval = 0,
-        this.reps = 0,
-        this.lapses = 0,
-        DateTime? due,
-        this.last,
-      }) : due = due ?? DateTime.now();
+    this.word, {
+    this.ease = 2.5,
+    this.interval = 0,
+    this.reps = 0,
+    this.lapses = 0,
+    DateTime? due,
+    this.last,
+  }) : due = due ?? DateTime.now();
 
   bool get isDue => !due.isAfter(DateTime.now());
 
@@ -9026,24 +9025,24 @@ class CardState {
   }
 
   Map<String, dynamic> toJson() => {
-    'word': word,
-    'ease': ease,
-    'interval': interval,
-    'reps': reps,
-    'lapses': lapses,
-    'due': due.toIso8601String(),
-    'last': last?.toIso8601String(),
-  };
+        'word': word,
+        'ease': ease,
+        'interval': interval,
+        'reps': reps,
+        'lapses': lapses,
+        'due': due.toIso8601String(),
+        'last': last?.toIso8601String(),
+      };
 
   factory CardState.fromJson(Map<String, dynamic> j) => CardState(
-    '${j['word']}',
-    ease: _nv(j['ease'], 2.5),
-    interval: _nv(j['interval']).round(),
-    reps: _nv(j['reps']).round(),
-    lapses: _nv(j['lapses']).round(),
-    due: DateTime.tryParse('${j['due']}'),
-    last: DateTime.tryParse('${j['last']}'),
-  );
+        '${j['word']}',
+        ease: _nv(j['ease'], 2.5),
+        interval: _nv(j['interval']).round(),
+        reps: _nv(j['reps']).round(),
+        lapses: _nv(j['lapses']).round(),
+        due: DateTime.tryParse('${j['due']}'),
+        last: DateTime.tryParse('${j['last']}'),
+      );
 }
 
 class AiInsight {
@@ -9340,7 +9339,7 @@ class StudyProvider extends ChangeNotifier {
     final out = <AiInsight>[];
     if (history.length >= 3) {
       final series =
-      history.take(10).toList().reversed.map((e) => e.percentage).toList();
+          history.take(10).toList().reversed.map((e) => e.percentage).toList();
       final slope = _aiSlope(series);
       if (slope > 1) {
         final cur = series.last;
@@ -9561,8 +9560,9 @@ class TutorEngine {
       );
     if (w.definition.isNotEmpty) b.writeln('Definition: ${w.definition}');
     if (w.meaning.isNotEmpty) b.writeln('Meaning: ${w.meaning}');
-    if (w.synonyms.isNotEmpty)
+    if (w.synonyms.isNotEmpty) {
       b.writeln('Synonyms: ${w.synonyms.take(5).join(', ')}');
+    }
     if (w.example.isNotEmpty) b.writeln('Example: ${w.example}');
     return b.toString().trim();
   }
@@ -9628,7 +9628,7 @@ class TutorEngine {
     if (has(['plan', 'what should i study', 'schedule'])) {
       return TutorMessage(
         'Today: review $due due cards, learn 5 new words, then do one test. '
-            '${mastery > 0 ? 'Your predicted mastery is ${mastery.toStringAsFixed(0)}%.' : 'Take a test so I can estimate your mastery.'}',
+        '${mastery > 0 ? 'Your predicted mastery is ${mastery.toStringAsFixed(0)}%.' : 'Take a test so I can estimate your mastery.'}',
         chips: const ['Quiz me', 'Word of the day'],
       );
     }
@@ -9656,8 +9656,8 @@ class TutorEngine {
       lastWord = a;
       return TutorMessage(
         '${a.word}: ${_meaning(a)}\n\n${b.word}: ${_meaning(b)}\n\n'
-            'Similarity of spelling: ${(_aiSimilarity(a.word, b.word) * 100).round()}%. '
-            'Check the example sentences to see how each is used.',
+        'Similarity of spelling: ${(_aiSimilarity(a.word, b.word) * 100).round()}%. '
+        'Check the example sentences to see how each is used.',
         chips: [a.word, b.word],
       );
     }
@@ -9702,7 +9702,7 @@ class TutorEngine {
       lastWord = related.first;
       return TutorMessage(
         'I could not find that exact word, but these relate to your question:\n'
-            '${related.map((w) => '- ${w.word}: ${_meaning(w)}').join('\n')}',
+        '${related.map((w) => '- ${w.word}: ${_meaning(w)}').join('\n')}',
         chips: related.map((w) => w.word).toList(),
       );
     }
@@ -9726,10 +9726,10 @@ class SentenceReport {
   String get verdict => score >= 85
       ? 'Excellent'
       : score >= 70
-      ? 'Good'
-      : score >= 50
-      ? 'Getting there'
-      : 'Needs work';
+          ? 'Good'
+          : score >= 50
+              ? 'Getting there'
+              : 'Needs work';
 }
 
 class SentenceCoach {
@@ -9984,7 +9984,7 @@ class _CoachTab extends StatelessWidget {
         BrandBanner(
           title: 'Your AI study coach',
           subtitle:
-          '${s.words.length} words - spaced repetition - local ML - works offline',
+              '${s.words.length} words - spaced repetition - local ML - works offline',
         ),
         const SizedBox(height: 14),
         Row(
@@ -10199,7 +10199,7 @@ class _ReviewTabState extends State<_ReviewTab>
           BrandBanner(
             title: 'Flashcard review',
             subtitle:
-            '${s.dueCount} due - ${s.newCount} new - spaced repetition (SM-2)',
+                '${s.dueCount} due - ${s.newCount} new - spaced repetition (SM-2)',
             height: 140,
           ),
           const SizedBox(height: 16),
@@ -10214,7 +10214,7 @@ class _ReviewTabState extends State<_ReviewTab>
                 const SizedBox(height: 8),
                 const Text(
                   'Rate how well you remembered each word. The AI schedules the next '
-                      'review: easy words come back later, hard words come back sooner.',
+                  'review: easy words come back later, hard words come back sooner.',
                   style: TextStyle(color: AppColors.muted, height: 1.4),
                 ),
                 const SizedBox(height: 14),
@@ -10517,7 +10517,7 @@ class _TutorTabState extends State<_TutorTab>
               final m = msgs[i];
               return Align(
                 alignment:
-                m.fromUser ? Alignment.centerRight : Alignment.centerLeft,
+                    m.fromUser ? Alignment.centerRight : Alignment.centerLeft,
                 child: Container(
                   margin: const EdgeInsets.only(bottom: 10),
                   padding: const EdgeInsets.all(14),
@@ -10723,7 +10723,7 @@ class _SentenceTabState extends State<_SentenceTab> {
                             value: r.score / 100,
                             strokeWidth: 7,
                             color:
-                            r.score >= 70 ? AppColors.blue : AppColors.pink,
+                                r.score >= 70 ? AppColors.blue : AppColors.pink,
                           ),
                           Center(
                             child: Text(
@@ -10779,11 +10779,11 @@ class _SentenceTabState extends State<_SentenceTab> {
                 OutlinedButton.icon(
                   onPressed: () {
                     context.read<StudyProvider>().review(
-                      w,
-                      r.score >= 85
-                          ? 5
-                          : (r.score >= 70 ? 4 : (r.score >= 50 ? 3 : 1)),
-                    );
+                          w,
+                          r.score >= 85
+                              ? 5
+                              : (r.score >= 70 ? 4 : (r.score >= 50 ? 3 : 1)),
+                        );
                     _studioToast(context, 'Counted as a flashcard review.');
                   },
                   icon: const Icon(Icons.style, color: AppColors.pink),
@@ -10928,7 +10928,7 @@ class _DeviceTab extends StatelessWidget {
         const SizedBox(height: 12),
         const Text(
           'Android handler: see MainActivity.kt. Without it, the app uses Dart fallbacks, '
-              'so nothing breaks.',
+          'so nothing breaks.',
           style: TextStyle(color: AppColors.muted, fontSize: 12),
         ),
       ],
@@ -11028,14 +11028,14 @@ class _SqflitePageState extends State<SqflitePage> {
     );
 
     final count = Sqflite.firstIntValue(
-      await db!.rawQuery('SELECT COUNT(*) FROM words'),
-    ) ??
+          await db!.rawQuery('SELECT COUNT(*) FROM words'),
+        ) ??
         0;
 
     final hard = Sqflite.firstIntValue(await db!.rawQuery(
-      "SELECT COUNT(*) FROM words WHERE LOWER(difficulty) "
+          "SELECT COUNT(*) FROM words WHERE LOWER(difficulty) "
           "IN ('advanced','hard','c1','c2')",
-    )) ??
+        )) ??
         0;
 
     if (!mounted) return;
@@ -11082,9 +11082,9 @@ class _SqflitePageState extends State<SqflitePage> {
                   isExpanded: true,
                   items: ['Beginner', 'Intermediate', 'Advanced']
                       .map((v) => DropdownMenuItem(
-                    value: v,
-                    child: Text(v),
-                  ))
+                            value: v,
+                            child: Text(v),
+                          ))
                       .toList(),
                   onChanged: (v) {
                     if (v != null) {
@@ -11169,7 +11169,7 @@ class _SqflitePageState extends State<SqflitePage> {
               ? w.definition.trim()
               : w.meaning.trim(),
           'difficulty':
-          w.difficulty.trim().isEmpty ? 'Beginner' : w.difficulty.trim(),
+              w.difficulty.trim().isEmpty ? 'Beginner' : w.difficulty.trim(),
         },
         conflictAlgorithm: ConflictAlgorithm.ignore,
       );
@@ -11197,76 +11197,75 @@ class _SqflitePageState extends State<SqflitePage> {
       body: loading
           ? const Center(child: CircularProgressIndicator())
           : Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(12),
-            child: TextField(
-              controller: search,
-              onChanged: (_) => _refresh(),
-              decoration: const InputDecoration(
-                prefixIcon: Icon(Icons.search),
-                hintText: 'Search words or definitions',
-                border: OutlineInputBorder(),
-              ),
-            ),
-          ),
-          Row(
-            children: [
-              Expanded(
-                child: Card(
-                  child: ListTile(
-                    title: const Text('Total words'),
-                    subtitle: Text('$total'),
-                  ),
-                ),
-              ),
-              Expanded(
-                child: Card(
-                  child: ListTile(
-                    title: const Text('Advanced'),
-                    subtitle: Text('$advanced'),
-                  ),
-                ),
-              ),
-            ],
-          ),
-          Padding(
-            padding: const EdgeInsets.all(8),
-            child: OutlinedButton.icon(
-              onPressed: _importWords,
-              icon: const Icon(Icons.download),
-              label: const Text('Import API vocabulary'),
-            ),
-          ),
-          Expanded(
-            child: ListView.builder(
-              itemCount: rows.length,
-              itemBuilder: (context, i) {
-                final row = rows[i];
-                return ListTile(
-                  title: Text('${row['word']}'),
-                  subtitle: Text(
-                    '${row['definition']}\n${row['difficulty']}',
-                  ),
-                  isThreeLine: true,
-                  onTap: () => _editWord(row),
-                  trailing: IconButton(
-                    icon: const Icon(
-                      Icons.delete_outline,
-                      color: Colors.pink,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(12),
+                  child: TextField(
+                    controller: search,
+                    onChanged: (_) => _refresh(),
+                    decoration: const InputDecoration(
+                      prefixIcon: Icon(Icons.search),
+                      hintText: 'Search words or definitions',
+                      border: OutlineInputBorder(),
                     ),
-                    onPressed: () => _delete(row['id'] as int),
                   ),
-                );
-              },
+                ),
+                Row(
+                  children: [
+                    Expanded(
+                      child: Card(
+                        child: ListTile(
+                          title: const Text('Total words'),
+                          subtitle: Text('$total'),
+                        ),
+                      ),
+                    ),
+                    Expanded(
+                      child: Card(
+                        child: ListTile(
+                          title: const Text('Advanced'),
+                          subtitle: Text('$advanced'),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+                Padding(
+                  padding: const EdgeInsets.all(8),
+                  child: OutlinedButton.icon(
+                    onPressed: _importWords,
+                    icon: const Icon(Icons.download),
+                    label: const Text('Import API vocabulary'),
+                  ),
+                ),
+                Expanded(
+                  child: ListView.builder(
+                    itemCount: rows.length,
+                    itemBuilder: (context, i) {
+                      final row = rows[i];
+                      return ListTile(
+                        title: Text('${row['word']}'),
+                        subtitle: Text(
+                          '${row['definition']}\n${row['difficulty']}',
+                        ),
+                        isThreeLine: true,
+                        onTap: () => _editWord(row),
+                        trailing: IconButton(
+                          icon: const Icon(
+                            Icons.delete_outline,
+                            color: Colors.pink,
+                          ),
+                          onPressed: () => _delete(row['id'] as int),
+                        ),
+                      );
+                    },
+                  ),
+                ),
+              ],
             ),
-          ),
-        ],
-      ),
     );
   }
 }
-
 
 class GeminiChatPage extends StatefulWidget {
   const GeminiChatPage({super.key});
@@ -11285,7 +11284,7 @@ class _GeminiChatPageState extends State<GeminiChatPage> {
   String get _userId =>
       FirebaseAuth.instance.currentUser?.uid ?? 'demo-learner';
 
-  String get _sessionId => 'vocabulary-${_userId}';
+  String get _sessionId => 'vocabulary-$_userId';
 
   Future<void> _sendMessage() async {
     final prompt = _controller.text.trim();
@@ -11305,31 +11304,30 @@ class _GeminiChatPageState extends State<GeminiChatPage> {
 
       final response = await http
           .post(
-        uri,
-        headers: {
-          'Content-Type': 'application/json',
-          'Accept': 'application/json',
-          'X-User-Id': _userId,
-        },
-        body: jsonEncode({
-          'message': prompt,
-          'session': _sessionId,
-          'kind': 'vocabulary-gemini-tutor',
-        }),
-      )
+            uri,
+            headers: {
+              'Content-Type': 'application/json',
+              'Accept': 'application/json',
+              'X-User-Id': _userId,
+            },
+            body: jsonEncode({
+              'message': prompt,
+              'session': _sessionId,
+              'kind': 'vocabulary-gemini-tutor',
+            }),
+          )
           .timeout(const Duration(seconds: 60));
 
       final dynamic decoded = jsonDecode(
         utf8.decode(response.bodyBytes),
       );
 
-      if (response.statusCode < 200 ||
-          response.statusCode >= 300) {
+      if (response.statusCode < 200 || response.statusCode >= 300) {
         final message = decoded is Map
             ? (decoded['message'] ??
-            decoded['error'] ??
-            decoded['description'] ??
-            'Server returned ${response.statusCode}')
+                decoded['error'] ??
+                decoded['description'] ??
+                'Server returned ${response.statusCode}')
             : 'Server returned ${response.statusCode}';
 
         throw Exception(message.toString());
@@ -11443,7 +11441,7 @@ class _GeminiChatPageState extends State<GeminiChatPage> {
                       SizedBox(height: 4),
                       Text(
                         'Ask about word meanings, synonyms, '
-                            'grammar, examples, or exam preparation.',
+                        'grammar, examples, or exam preparation.',
                         style: TextStyle(
                           color: AppColors.text,
                           fontSize: 13,
@@ -11458,110 +11456,105 @@ class _GeminiChatPageState extends State<GeminiChatPage> {
           Expanded(
             child: _messages.isEmpty
                 ? const Center(
-              child: Padding(
-                padding: EdgeInsets.all(24),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Icon(
-                      Icons.chat_bubble_outline,
-                      size: 56,
-                      color: AppColors.pink,
-                    ),
-                    SizedBox(height: 12),
-                    Text(
-                      'What would you like to learn today?',
-                      textAlign: TextAlign.center,
-                      style: TextStyle(
-                        color: AppColors.blue,
-                        fontWeight: FontWeight.w600,
-                        fontSize: 17,
+                    child: Padding(
+                      padding: EdgeInsets.all(24),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(
+                            Icons.chat_bubble_outline,
+                            size: 56,
+                            color: AppColors.pink,
+                          ),
+                          SizedBox(height: 12),
+                          Text(
+                            'What would you like to learn today?',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              color: AppColors.blue,
+                              fontWeight: FontWeight.w600,
+                              fontSize: 17,
+                            ),
+                          ),
+                        ],
                       ),
                     ),
-                  ],
-                ),
-              ),
-            )
+                  )
                 : ListView.builder(
-              controller: _scrollController,
-              padding: const EdgeInsets.symmetric(
-                horizontal: 16,
-                vertical: 8,
-              ),
-              itemCount:
-              _messages.length + (_isLoading ? 1 : 0),
-              itemBuilder: (context, index) {
-                if (_isLoading && index == _messages.length) {
-                  return const Align(
-                    alignment: Alignment.centerLeft,
-                    child: Card(
-                      color: AppColors.softBlue,
-                      child: Padding(
-                        padding: EdgeInsets.all(14),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            SizedBox(
-                              width: 18,
-                              height: 18,
-                              child: CircularProgressIndicator(
-                                strokeWidth: 2,
-                                color: AppColors.pink,
+                    controller: _scrollController,
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 16,
+                      vertical: 8,
+                    ),
+                    itemCount: _messages.length + (_isLoading ? 1 : 0),
+                    itemBuilder: (context, index) {
+                      if (_isLoading && index == _messages.length) {
+                        return const Align(
+                          alignment: Alignment.centerLeft,
+                          child: Card(
+                            color: AppColors.softBlue,
+                            child: Padding(
+                              padding: EdgeInsets.all(14),
+                              child: Row(
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  SizedBox(
+                                    width: 18,
+                                    height: 18,
+                                    child: CircularProgressIndicator(
+                                      strokeWidth: 2,
+                                      color: AppColors.pink,
+                                    ),
+                                  ),
+                                  SizedBox(width: 10),
+                                  Text('Gemini is thinking...'),
+                                ],
                               ),
                             ),
-                            SizedBox(width: 10),
-                            Text('Gemini is thinking...'),
-                          ],
+                          ),
+                        );
+                      }
+
+                      final message = _messages[index];
+                      final role = message['role'];
+                      final isUser = role == 'user';
+                      final isError = role == 'error';
+
+                      final color =
+                          isUser ? AppColors.softPink : AppColors.softBlue;
+
+                      return Align(
+                        alignment: isUser
+                            ? Alignment.centerRight
+                            : Alignment.centerLeft,
+                        child: Container(
+                          constraints: BoxConstraints(
+                            maxWidth: MediaQuery.of(context).size.width * 0.82,
+                          ),
+                          margin: const EdgeInsets.only(bottom: 12),
+                          padding: const EdgeInsets.all(14),
+                          decoration: BoxDecoration(
+                            color: isError ? const Color(0xFFFFF1F2) : color,
+                            borderRadius: BorderRadius.circular(16),
+                            border: Border.all(
+                              color: isUser
+                                  ? AppColors.pink.withValues(alpha: 0.35)
+                                  : AppColors.blue.withValues(alpha: 0.25),
+                            ),
+                          ),
+                          child: SelectableText(
+                            message['text'] ?? '',
+                            style: TextStyle(
+                              height: 1.45,
+                              color: isError
+                                  ? Colors.red.shade800
+                                  : AppColors.text,
+                            ),
+                          ),
                         ),
-                      ),
-                    ),
-                  );
-                }
-
-                final message = _messages[index];
-                final role = message['role'];
-                final isUser = role == 'user';
-                final isError = role == 'error';
-
-                final color = isUser
-                    ? AppColors.softPink
-                    : AppColors.softBlue;
-
-                return Align(
-                  alignment: isUser
-                      ? Alignment.centerRight
-                      : Alignment.centerLeft,
-                  child: Container(
-                    constraints: BoxConstraints(
-                      maxWidth:
-                      MediaQuery.of(context).size.width * 0.82,
-                    ),
-                    margin: const EdgeInsets.only(bottom: 12),
-                    padding: const EdgeInsets.all(14),
-                    decoration: BoxDecoration(
-                      color: isError
-                          ? const Color(0xFFFFF1F2)
-                          : color,
-                      borderRadius: BorderRadius.circular(16),
-                      border: Border.all(
-                        color: isUser
-                            ? AppColors.pink.withValues(alpha: 0.35)
-                            : AppColors.blue.withValues(alpha: 0.25),
-                      ),
-                    ),
-                    child: SelectableText(
-                      message['text'] ?? '',
-                      style: TextStyle(
-                        height: 1.45,
-                        color: isError
-                            ? Colors.red.shade800
-                            : AppColors.text,
-                      ),
-                    ),
+                      );
+                    },
                   ),
-                );
-              },
-            ),
           ),
           SafeArea(
             top: false,
@@ -11635,5 +11628,3 @@ class _GeminiChatPageState extends State<GeminiChatPage> {
     );
   }
 }
-
-
