@@ -8928,6 +8928,11 @@ class NativeProvider extends ChangeNotifier {
     );
     notifyListeners();
 
+    if (kIsWeb) {
+      _startFallback();
+      return;
+    }
+
     _sub = NativeBridge.events().listen(
       _onEvent,
       onError: (Object e) {
