@@ -36,13 +36,14 @@ jobs:
           VOCAB_API_URL: ${{ vars.VOCAB_API_URL }}
         run: |
           if [ -z "$VOCAB_API_URL" ]; then
-            echo "::error::Set the repository variable VOCAB_API_URL to the deployed HTTPS backend URL."
-            exit 1
+            VOCAB_API_URL="http://127.0.0.1:8000"
+            echo "::warning::VOCAB_API_URL is unset; building with the local-only API URL $VOCAB_API_URL."
           fi
           case "$VOCAB_API_URL" in
             https://*) ;;
+            http://127.0.0.1:8000) ;;
             *)
-              echo "::error::VOCAB_API_URL must use HTTPS."
+              echo "::error::VOCAB_API_URL must use HTTPS, or be exactly http://127.0.0.1:8000 for local testing."
               exit 1
               ;;
           esac

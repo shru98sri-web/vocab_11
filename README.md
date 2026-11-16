@@ -29,10 +29,12 @@ flutter build web --release \
   --dart-define=VOCAB_URL=https://your-backend.example.com
 ```
 
-The GitHub Pages workflow reads that URL from the repository variable
-`VOCAB_API_URL`. Set it under **Settings → Secrets and variables → Actions →
-Variables** before deploying. Enable GitHub Pages with **GitHub Actions** as
-the build and deployment source.
+The GitHub Pages workflow reads `VOCAB_API_URL` from the repository variable.
+If unset, it builds with `http://127.0.0.1:8000` so the static site can deploy;
+that fallback only works when the visitor is running the backend locally. For
+the public site to access an API, set `VOCAB_API_URL` to a deployed HTTPS
+backend URL under **Settings → Secrets and variables → Actions → Variables**.
+Enable GitHub Pages with **GitHub Actions** as the build and deployment source.
 
 The JSON file in `backend/vocab_250.json` is the API's server-side database,
 not a Flutter asset. The app currently loads its Flutter assets from the PNG
