@@ -546,7 +546,7 @@ class EtlWordsResult {
 }
 
 /// Vocabulary pipeline
-///  EXTRACT   : GET /words from server.py (falls back to offline cache)
+///  EXTRACT   : GET /words, then offline cache and bundled vocabulary
 ///  TRANSFORM : validate, trim, normalise, drop duplicates / empty rows
 ///  LOAD      : hand clean words to the app + write offline cache
 class WordEtl {
@@ -561,10 +561,14 @@ class WordEtl {
     try {
       raw = await VocabularyApi.fetchRawWords();
       source = 'server';
-    } catch (e) {
+    } catch (_) {
       raw = await _readCache();
-      if (raw.isEmpty) rethrow;
-      source = 'offline cache';
+      if (raw.isNotEmpty) {
+        source = 'offline cache';
+      } else {
+        raw = await _readBundledWords();
+        source = 'bundled dataset';
+      }
     }
 
     // ---- TRANSFORM ----
@@ -627,6 +631,22 @@ class WordEtl {
     } catch (_) {
       return [];
     }
+  }
+
+  static Future<List<Map<String, dynamic>>> _readBundledWords() async {
+    final decoded = jsonDecode(
+      await rootBundle.loadString('backend/vocab_250.json'),
+    );
+    final words = decoded is Map ? decoded['words'] : decoded;
+    if (words is! List) {
+      throw const FormatException(
+        'Bundled vocabulary must contain a words list.',
+      );
+    }
+    return words
+        .whereType<Map>()
+        .map((word) => Map<String, dynamic>.from(word))
+        .toList();
   }
 }
 

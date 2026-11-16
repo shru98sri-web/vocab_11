@@ -37,5 +37,6 @@ backend URL under **Settings → Secrets and variables → Actions → Variables
 Enable GitHub Pages with **GitHub Actions** as the build and deployment source.
 
 The JSON file in `backend/vocab_250.json` is the API's server-side database,
-not a Flutter asset. The app currently loads its Flutter assets from the PNG
-files declared in `pubspec.yaml`.
+and is also bundled as an offline startup fallback. If the API is unavailable,
+the app loads its cached vocabulary or this bundled dataset. API-backed writes
+and chat still require a reachable backend.

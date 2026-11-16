@@ -80,6 +80,7 @@ flutter:
   assets:
     - assets/icon/Logo.png
     - assets/icon/Splash_Screen.png
+    - backend/vocab_250.json
 flutter_launcher_icons:
   android: "launcher_icon"
   ios: false
