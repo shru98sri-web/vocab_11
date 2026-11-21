@@ -1,0 +1,50 @@
+name: Build and deploy Docker image
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  docker:
+    runs-on: ubuntu-latest
+    env:
+      IMAGE_NAME: ghcr.io/${{ github.repository_owner }}/vocab_11
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Build image
+        run: docker build --tag "$IMAGE_NAME:${GITHUB_SHA}" --tag "$IMAGE_NAME:latest" .
+
+      - name: Run container smoke test
+        run: |
+          set -e
+          docker run --detach --name vocab-11-smoke --publish 8080:80 "$IMAGE_NAME:${GITHUB_SHA}"
+          trap 'docker logs vocab-11-smoke || true; docker rm --force vocab-11-smoke || true' EXIT
+          for attempt in {1..30}; do
+            if curl --fail --silent --show-error http://127.0.0.1:8080/ > /tmp/vocab-11.html; then
+              grep -qi '<title>' /tmp/vocab-11.html
+              echo 'Docker container smoke test passed.'
+              exit 0
+            fi
+            sleep 2
+          done
+          echo 'Docker container did not become ready.'
+          exit 1
+
+      - name: Log in to GHCR
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Push image
+        run: |
+          docker push "$IMAGE_NAME:${GITHUB_SHA}"
+          docker push "$IMAGE_NAME:latest"
