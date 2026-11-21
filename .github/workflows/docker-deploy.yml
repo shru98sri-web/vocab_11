@@ -18,6 +18,18 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+
+      - name: Build Flutter web assets
+        run: |
+          flutter config --enable-web
+          flutter pub get
+          flutter build web --release
+
       - name: Build image
         run: docker build --tag "$IMAGE_NAME:${GITHUB_SHA}" --tag "$IMAGE_NAME:latest" .
 
